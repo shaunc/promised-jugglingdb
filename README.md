@@ -1,5 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)
-## About [<img src="https://secure.travis-ci.org/pocesar/promised-jugglingdb.png" />](http://travis-ci.org/#!/pocesar/promised-jugglingdb)
+## About [![Build Status](https://travis-ci.org/pocesar/promised-jugglingdb.png?branch=master)](https://travis-ci.org/pocesar/promised-jugglingdb)
 
 [JugglingDB(3)](http://jugglingdb.co) is cross-db ORM for nodejs, providing
 **common interface** to access most popular database formats.  Currently
@@ -13,11 +13,15 @@ which allows to write rich client-side apps talking to server using JSON API.
 
 ## Installation
 
-    npm install jugglingdb
+```bash
+npm install jugglingdb
+```
 
 plus you should install appropriated adapter, for example for redis:
 
-    npm install jugglingdb-redis
+```bash
+npm install jugglingdb-redis
+```
 
 check following list of available adapters
 
@@ -250,31 +254,32 @@ User.validatesUniquenessOf('email', {message: 'email is not unique'});
 
 user.isValid().then(function () {
     // valid!
-}, function(){
+}, function(erros){
     // not valid
-    user.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
+    errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
+    // or user.errors, they are the same
 })
 
 ```
 
 SEE ALSO [jugglingdb-validations(3)](http://jugglingdb.co/validations.3.html) or
-`man jugglingdb-validations` in terminal. Validation tests: ./test/validations.test.js
+`man jugglingdb-validations` in terminal. Validation tests: `./test/validations.test.js`
 
 ## Hooks
 
 The following hooks supported:
 
-    - afterInitialize
-    - beforeCreate
-    - afterCreate
-    - beforeSave
-    - afterSave
-    - beforeUpdate
-    - afterUpdate
-    - beforeDestroy
-    - afterDestroy
-    - beforeValidate
-    - afterValidate
+* afterInitialize
+* beforeCreate
+* afterCreate
+* beforeSave
+* afterSave
+* beforeUpdate
+* afterUpdate
+* beforeDestroy
+* afterDestroy
+* beforeValidate
+* afterValidate
 
 Each callback is class method of the model, it should accept single argument: `next`, this is callback which should be called after end of the hook. Except `afterInitialize` because this method is syncronous (called after `new Model`).
 
@@ -317,46 +322,69 @@ User.create(data).then();
 
 SEE [jugglingdb-hooks](http://jugglingdb.co/hooks.3.html) or type this command
 in your fav terminal: `man jugglingdb-hooks`. Also check tests for usage
-examples: ./test/hooks.test.js
+examples: `./test/hooks.test.js`
 
 ## Your own database adapter
 
 To use custom adapter, pass it's package name as first argument to `Schema` constructor:
 
-    var mySchema = new Schema('mycouch', {host:.., port:...});
+```javascript
+var mySchema = new Schema('mycouch', {host:.., port:...});
+```
 
 In that case your adapter should be named as 'jugglingdb-mycouch' npm package.
 
-## Testing [outdated]
-
-TODO: upd this section
+## Testing
 
 Core of jugglingdb tests only basic features (database-agnostic) like
 validations, hooks and runs db-specific tests using memory storage. It also
 exports complete bucket of tests for external running. Each adapter should run
 this bucket (example from `jugglingdb-redis`):
 
-    var jdb = require('jugglingdb'),
-    Schema = jdb.Schema,
-    test = jdb.test;
+```javascript
+// call this file init.js and call "mocha --require test/init.js"
+var jdb = require('jugglingdb'),
+Schema = jdb.Schema;
 
-    var schema = new Schema(__dirname + '/..', {host: 'localhost', database: 1});
+var schema = new Schema(__dirname + '/..', {host: 'localhost', database: 1});
+```
 
-    test(module.exports, schema);
+Each adapter could add specific tests to standart bucket (using mocha):
 
-Each adapter could add specific tests to standart bucket:
-
-    test.it('should do something special', function (test) {
-        test.done();
+```javascript
+describe('your adapter', function(){
+    it('should do something special', function (done) {
+        done();
     });
+});
+```
 
 Or it could tell core to skip some test from bucket:
 
-    test.skip('name of test case');
+```javascript
+describe('adapter1', function(){
+    it('should have name of test case', function(done){
+        done();
+    });
+});
+describe('no-adapter', function(){
+    it('will be skipped', function(done){
+        done();
+    });
+});
+```
 
 To run tests use this command:
 
-    npm test
+```bash
+mocha
+```
+
+and to skip, for example `adapter` call mocha with `--grep`:
+
+```bash
+mocha --grep "^adapter*"
+```
 
 Before running make sure you've installed package (`npm install`) and if you
 running some specific adapter tests, ensure you've configured database
@@ -372,6 +400,7 @@ http://jugglingdb.co generated from md files stored in this repo at ./docs repo
 
 ## MIT License
 
+```
     Copyright (C) 2011 by Anatoliy Chakkaev <mail [åt] anatoliy [døt] in>
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -391,4 +420,4 @@ http://jugglingdb.co generated from md files stored in this repo at ./docs repo
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
+```
