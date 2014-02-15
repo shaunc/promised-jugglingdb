@@ -1,5 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)
-## About [<img src="https://secure.travis-ci.org/1602/jugglingdb.png" />](http://travis-ci.org/#!/1602/jugglingdb)
+## About [<img src="https://secure.travis-ci.org/pocesar/promised-jugglingdb.png" />](http://travis-ci.org/#!/pocesar/promised-jugglingdb)
 
 [JugglingDB(3)](http://jugglingdb.co) is cross-db ORM for nodejs, providing
 **common interface** to access most popular database formats.  Currently
@@ -185,18 +185,20 @@ Post.belongsTo(User, {as: 'author', foreignKey: 'userId'});
 // post.author(user) -- setter when called with object
 
 User.hasAndBelongsToMany('groups');
-// user.groups(callback) - get groups of user
-// user.groups.create(data, callback) - create new group and connect with user
-// user.groups.add(group, callback) - connect existing group with user
-// user.groups.remove(group, callback) - remove connection between group and user
+// user.groups().then() - get groups of user
+// user.groups.create(data).then() - create new group and connect with user
+// user.groups.add(group).then() - connect existing group with user
+// user.groups.remove(group).then() - remove connection between group and user
 
 schema.automigrate(); // required only for mysql and postgres NOTE: it will drop User and Post tables
 
 // work with models:
 var user = new User;
-user.save(function (err) {
+user.save().then(function() {
     var post = user.posts.build({title: 'Hello world'});
     post.save(console.log);
+}, function(err){
+    throw e;
 });
 
 // or just call it as function (with the same result):
@@ -208,29 +210,29 @@ user.save(...);
 // just instantiate model
 new Post
 // save model (of course async)
-Post.create(cb);
+Post.create().then();
 // all posts
-Post.all(cb)
+Post.all().then()
 // all posts by user
-Post.all({where: {userId: user.id}, order: 'id', limit: 10, skip: 20});
+Post.all({where: {userId: user.id}, order: 'id', limit: 10, skip: 20}).then();
 // the same as prev
-user.posts(cb)
+user.posts().then()
 // get one latest post
-Post.findOne({where: {published: true}, order: 'date DESC'}, cb);
+Post.findOne({where: {published: true}, order: 'date DESC'}).then();
 // same as new Post({userId: user.id});
 user.posts.build
-// save as Post.create({userId: user.id}, cb);
-user.posts.create(cb)
+// save as Post.create({userId: user.id}).then();
+user.posts.create().then()
 // find instance by id
-User.find(1, cb)
+User.find(1).then()
 // count instances
-User.count([conditions, ]cb)
+User.count([conditions, ]).then()
 // destroy instance
-user.destroy(cb);
+user.destroy().then();
 // destroy all instances
-User.destroyAll(cb);
+User.destroyAll().then();
 // update a post (currently only on the mysql adapter)
-Post.update({ where:{id:'1'}, update:{ published:false }}, cb);
+Post.update({ where:{id:'1'}, update:{ published:false }}).then();
 ```
 
 SEE [model(3)](http://jugglingdb.co/model.3.html) for more information about
@@ -246,10 +248,11 @@ User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
 User.validatesNumericalityOf('age', {int: true});
 User.validatesUniquenessOf('email', {message: 'email is not unique'});
 
-user.isValid(function (valid) {
-    if (!valid) {
-        user.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}    
-    }
+user.isValid().then(function () {
+    // valid!
+}, function(){
+    // not valid
+    user.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
 })
 
 ```
@@ -282,7 +285,7 @@ During beforehooks the `next` callback accepts one argument, which is used to te
 ```javascript
 var user = new User;
 // afterInitialize
-user.save(callback); // If Model.id isn't set, save will invoke Model.create() instead
+user.save().then(); // If Model.id isn't set, save will invoke Model.create() instead
 // beforeValidate
 // afterValidate
 // beforeSave
@@ -290,7 +293,7 @@ user.save(callback); // If Model.id isn't set, save will invoke Model.create() i
 // afterUpdate
 // afterSave
 // callback
-user.updateAttribute('email', 'email@example.com', callback);
+user.updateAttribute('email', 'email@example.com').then();
 // beforeValidate
 // afterValidate
 // beforeSave
@@ -298,11 +301,11 @@ user.updateAttribute('email', 'email@example.com', callback);
 // afterUpdate
 // afterSave
 // callback
-user.destroy(callback);
+user.destroy().then();
 // beforeDestroy
 // afterDestroy
 // callback
-User.create(data, callback);
+User.create(data).then();
 // beforeValidate
 // afterValidate
 // beforeCreate
@@ -388,7 +391,4 @@ http://jugglingdb.co generated from md files stored in this repo at ./docs repo
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/1602/jugglingdb/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 

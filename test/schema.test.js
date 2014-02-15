@@ -1,57 +1,54 @@
 // This test written in mocha+should.js
-var should = require('./init.js');
-
 var db = getSchema(), slave = getSchema(), Model, SlaveModel;
 
-describe('schema', function() {
+describe('schema', function (){
 
-    it('should define Model', function() {
-        Model = db.define('Model');
-        Model.schema.should.eql(db);
-        var m = new Model;
-        m.schema.should.eql(db);
+  it('should define Model', function (){
+    Model = db.define('Model');
+    expect(Model.schema).to.eql(db);
+    var m = new Model;
+    expect(m.schema).to.eql(db);
+  });
+
+  it('should clone existing model', function (){
+    SlaveModel = slave.copyModel(Model);
+    expect(SlaveModel.schema).to.eql(slave);
+    expect(slave).to.not.eql(db);
+    var sm = new SlaveModel;
+    expect(sm).to.be.a(Model);
+    expect(sm.schema).to.not.eql(db);
+    expect(sm.schema).to.eql(slave);
+  });
+
+  it('should automigrate', function (done){
+    db.automigrate(done);
+  });
+
+  it('should create transaction', function (done){
+    var tr = db.transaction();
+    expect(tr.connected).to.be(false);
+    expect(tr.connecting).to.be(false);
+    var called = false;
+    tr.models.Model.create(new Array(3), function (){
+      called = true;
     });
+    expect(tr.connected).to.be(false);
+    expect(tr.connecting).to.be(true);
 
-    it('should clone existing model', function() {
-        SlaveModel = slave.copyModel(Model);
-        SlaveModel.schema.should.eql(slave);
-        slave.should.not.eql(db);
-        var sm = new SlaveModel;
-        sm.should.be.instanceOf(Model);
-        sm.schema.should.not.eql(db);
-        sm.schema.should.eql(slave);
+    db.models.Model.count(function (err, c){
+      expect(err).to.not.be.ok();
+      expect(c).to.equal(0);
+      expect(called).to.be(false);
+      tr.exec(function (){
+        setTimeout(function (){
+          expect(called).to.be(true);
+          db.models.Model.count(function (err, c){
+            expect(c).to.equal(3);
+            done();
+          });
+        }, 100);
+      });
     });
-
-    it('should automigrate', function(done) {
-        db.automigrate(done);
-    });
-
-    it('should create transaction', function(done) {
-        var tr = db.transaction();
-        tr.connected.should.be.false;
-        tr.connecting.should.be.false;
-        var called = false;
-        tr.models.Model.create(Array(3), function () {
-            called = true;
-        });
-        tr.connected.should.be.false;
-        tr.connecting.should.be.true;
-
-        db.models.Model.count(function(err, c) {
-            should.not.exist(err);
-            should.exist(c);
-            c.should.equal(0);
-            called.should.be.false;
-            tr.exec(function () {
-                setTimeout(function() {
-                    called.should.be.true;
-                    db.models.Model.count(function(err, c) {
-                        c.should.equal(3);
-                        done();
-                    });
-                }, 100);
-            });
-        });
-    });
+  });
 
 });

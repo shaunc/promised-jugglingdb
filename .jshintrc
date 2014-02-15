@@ -1,0 +1,20 @@
+{
+  "bitwise" : true,
+  "curly"   : true,
+  "eqeqeq"  : false,
+  "forin"   : false,
+  "noarg"   : true,
+  "noempty" : false,
+  "newcap"  : false,
+  "nonew"   : true,
+  "undef"   : true,
+  "devel"   : true,
+  "proto"   : true,
+  "node"    : true,
+  "sub"     : true,
+  "globals" : {
+    "$"         : true,
+    "railway"   : true
+  },
+  "quotmark": "single"
+}

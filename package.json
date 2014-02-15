@@ -1,8 +1,16 @@
 {
-  "name": "jugglingdb",
-  "description": "ORM for every database: redis, mysql, neo4j, mongodb, couchdb, postgres, sqlite",
+  "name": "promised-jugglingdb",
+  "description": "Q Promise based version of JugglingDB, the ORM for every database: redis, mysql, neo4j, mongodb, couchdb, postgres, sqlite",
   "version": "0.2.12",
   "author": "Anatoliy Chakkaev <rpm1602@gmail.com>",
+  "keywords": [
+    "promise",
+    "q",
+    "jugglingdb",
+    "promise based",
+    "rewrite",
+    "alternative"
+  ],
   "contributors": [
     {
       "name": "Anatoliy Chakkaev",
@@ -43,15 +51,19 @@
     {
       "name": "Nicholas Westlake",
       "email": "nicholasredlin@gmail.com"
+    },
+    {
+      "name": "Paulo Cesar",
+      "email": "email@pocesar.e4ward.com"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/1602/jugglingdb"
+    "url": "https://github.com/pocesar/promised-jugglingdb"
   },
   "main": "index.js",
   "scripts": {
-    "test": "make test",
+    "test": "jshint lib && mocha",
     "prepublish": "make build"
   },
   "man": [
@@ -67,11 +79,15 @@
     "node >= 0.6"
   ],
   "devDependencies": {
-    "semicov": "*",
-    "should": "~3.0.1",
-    "mocha": "~1.8.2"
+    "grunt": "0.4.x",
+    "grunt-mocha-istanbul": "*",
+    "expect.js": "*",
+    "mocha": "*",
+    "sinon":"*",
+    "jshint":"*"
   },
   "dependencies": {
-    "inflection": "=1.2.7"
+    "inflection": "=1.2.7",
+    "q":"*"
   }
 }
