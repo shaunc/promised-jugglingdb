@@ -14,7 +14,7 @@ which allows to write rich client-side apps talking to server using JSON API.
 ## Installation
 
 ```bash
-npm install jugglingdb
+npm install promised-jugglingdb
 ```
 
 plus you should install appropriated adapter, for example for redis:
