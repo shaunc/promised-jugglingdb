@@ -118,7 +118,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
   <tbody>
     <!-- Firebird -->
     <tr>
-      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://github.com/1602/jugglingdb/raw/master/media/firebirdsql.ico" alt="Firebird"/></a> Firebird</td>
+      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://github.com/pocesar/promised-jugglingdb/raw/master/media/firebirdsql.ico" alt="Firebird"/></a> Firebird</td>
       <td><a href="http://github.com/hgourvest/jugglingdb-firebird" target="_blank">jugglingdb-firebird</a></td>
       <td><a href="http://github.com/hgourvest" target="_blank">Henri Gourvest</a></td>
       <td></td>
@@ -126,7 +126,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
 
     <!-- MongoDB -->
     <tr>
-      <td><a href="http://www.mongodb.org" target="_blank"><img src="https://github.com/1602/jugglingdb/raw/master/media/mongodb.ico" alt="MongoDB" /></a> MongoDB</td>
+      <td><a href="http://www.mongodb.org" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/mongodb.ico" alt="MongoDB" /></a> MongoDB</td>
       <td><a href="https://github.com/jugglingdb/mongodb-adapter" target="_blank">jugglingdb/mongodb-adapter</a></td>
       <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
       <td><a href="https://travis-ci.org/jugglingdb/mongodb-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/mongodb-adapter.png?branch=master" alt="Build Status" /></a></td>
@@ -134,7 +134,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
 
     <!-- MySQL -->
     <tr>
-      <td><a href="http://www.mysql.com/" target="_blank"><img src="https://github.com/1602/jugglingdb/raw/master/media/mysql.ico" style="vertical-align:middle"" alt="MySQL" /></a> MySQL</td>
+      <td><a href="http://www.mysql.com/" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/mysql.ico" style="vertical-align:middle"" alt="MySQL" /></a> MySQL</td>
       <td><a href="https://github.com/jugglingdb/mysql-adapter" target="_blank">jugglingdb/mysql</a></td>
       <td><a href="https://github.com/dgsan" target="_blank">dgsan</a></td>
       <td><a href="https://travis-ci.org/jugglingdb/mysql-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/mysql-adapter.png?branch=master" alt="Build Status" /></a></td>
@@ -174,7 +174,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
 
     <!-- SQLite -->
     <tr>
-      <td><a href="http://www.sqlite.org/" target="_blank"><img width="16" src="https://github.com/1602/jugglingdb/raw/master/media/sqlite.png" style="vertical-align:middle"" alt="SQLite" /></a> SQLite</td>
+      <td><a href="http://www.sqlite.org/" target="_blank"><img width="16" src="https://raw.github.com/1602/jugglingdb/master/media/sqlite.png" style="vertical-align:middle"" alt="SQLite" /></a> SQLite</td>
       <td><a href="https://github.com/jugglingdb/sqlite3-adapter" target="_blank">jugglingdb/sqlite3-adapter</a></td>
       <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
       <td><a href="https://travis-ci.org/jugglingdb/sqlite3-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/sqlite3-adapter.png?branch=master" alt="Build Status" /></a></td>
