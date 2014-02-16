@@ -118,7 +118,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
   <tbody>
     <!-- Firebird -->
     <tr>
-      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/firebirdsql.ico" alt="Firebird"/></a> Firebird</td>
+      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/firebird.ico" alt="Firebird"/></a> Firebird</td>
       <td><a href="http://github.com/hgourvest/jugglingdb-firebird" target="_blank">jugglingdb-firebird</a></td>
       <td><a href="http://github.com/hgourvest" target="_blank">Henri Gourvest</a></td>
       <td></td>
