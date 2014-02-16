@@ -88,6 +88,6 @@
   },
   "dependencies": {
     "inflection": "=1.2.7",
-    "q":"*"
+    "bluebird":"*"
   }
 }

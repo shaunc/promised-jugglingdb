@@ -1,5 +1,10 @@
 [![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)
+
 ## About [![Build Status](https://travis-ci.org/pocesar/promised-jugglingdb.png?branch=master)](https://travis-ci.org/pocesar/promised-jugglingdb)
+
+This version is the promise based (instead of callbacks) version of Jugglindb,
+and will be maintained to be kept up-to-date with the original, callback-based
+module. All adapters work with this version out-of-the-box.
 
 [JugglingDB(3)](http://jugglingdb.co) is cross-db ORM for nodejs, providing
 **common interface** to access most popular database formats.  Currently
@@ -24,6 +29,80 @@ npm install jugglingdb-redis
 ```
 
 check following list of available adapters
+
+## What's the difference?
+
+Take this callback based jugglingdb code
+
+```javascript
+  Article.create({title: 'Article 1'}, function (e, article1){
+    Article.create({title: 'Article 2'}, function (e, article2){
+      Tag.create({name: 'correct'}, function (e, tag){
+        article1.tags.add(tag, function (e, at){
+          article2.tags.add(tag, function (e, at){
+            article2.tags.remove(tag, function (e){
+              article2.tags(true, function (e, tags){
+                article1.tags(true, function (e, tags){
+                    // is it hell?
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+```
+
+And compare to this:
+
+```javascript
+Article
+.create({title: 'Article 1'})
+.bind({})
+//since we are dealing with 3 models, we need to be able to pass them around
+.then(function(article1){
+    this.article1 = article1;
+    return Article.create({title: 'Article 2'});
+})
+.then(function(article2){
+    this.article2 = article2;
+    return Tag.create({name: 'correct'});
+})
+.then(function(tag){
+    this.tag = tag;
+    return this.article1.tags.add(tag);
+})
+.then(function(){
+    return this.article2.tags.add(this.tag);
+})
+.then(function(){
+    return this.article2.tags.remove(articles.tag);
+})
+.then(function(){
+    return this.article2.tags(true);
+})
+.then(function(){
+    return this.article1.tags(true);
+})
+.catch(TypeError, ReferenceError, function(err){
+    console.log('An error ocurred', err);
+})
+.catch(ValidationError, function(err){
+    console.log('An error ocurred', err);
+})
+.done(function(tags){
+    console.log('Finished with article1 tags', tags);
+});
+
+```
+
+More verbose, but everything in it's place, and the flow is linear and easy to spot any errors, plus each error or
+exception goes to their own `catch` call since if any error or exception happens in any of the calls, it will be
+caught by the `catch` part of the chain, and it won't procceed.
+
+Everything will be executed in order, and can be watched and easily tested, in comparision
+the to callback hell, that's deeply nested and might lead to memory leaks.
 
 ## JugglingDB adapters
 
@@ -138,7 +217,7 @@ TDD style, check that adapter pass all tests defined in `test/common_test.js`.
 ## Usage
 
 ```javascript
-var Schema = require('jugglingdb').Schema;
+var Schema = require('promised-jugglingdb').Schema;
 var schema = new Schema('redis', {port: 6379}); //port number depends on your configuration
 // define models
 var Post = schema.define('Post', {
@@ -202,7 +281,7 @@ user.save().then(function() {
     var post = user.posts.build({title: 'Hello world'});
     post.save(console.log);
 }, function(err){
-    throw e;
+    throw err;
 });
 
 // or just call it as function (with the same result):
@@ -254,7 +333,7 @@ User.validatesUniquenessOf('email', {message: 'email is not unique'});
 
 user.isValid().then(function () {
     // valid!
-}, function(erros){
+}, function(errors){
     // not valid
     errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
     // or user.errors, they are the same
@@ -281,9 +360,11 @@ The following hooks supported:
 * beforeValidate
 * afterValidate
 
-Each callback is class method of the model, it should accept single argument: `next`, this is callback which should be called after end of the hook. Except `afterInitialize` because this method is syncronous (called after `new Model`).
+Each callback is class method of the model, it should accept single argument: `next`, this is callback which should
+be called after end of the hook. Except `afterInitialize` because this method is syncronous (called after `new Model`).
 
-During beforehooks the `next` callback accepts one argument, which is used to terminate flow. The argument passed on as the `err` parameter to the API method callback.
+During beforehooks the `next` callback accepts one argument, which is used to terminate flow. The argument passed on
+as the `err` parameter to the API method callback.
 
 ## Object lifecycle:
 
@@ -342,39 +423,34 @@ exports complete bucket of tests for external running. Each adapter should run
 this bucket (example from `jugglingdb-redis`):
 
 ```javascript
-// call this file init.js and call "mocha --require test/init.js"
+// test/init.js
 var jdb = require('jugglingdb'),
 Schema = jdb.Schema;
 
-var schema = new Schema(__dirname + '/..', {host: 'localhost', database: 1});
+global.getSchema = function(){
+    // ../ is your adapter path, assuming we are in /test/, and it's in your /lib/ folder
+    return new Schema(require(__dirname + '/../lib'), {host: 'localhost', database: 1});
+};
 ```
 
-Each adapter could add specific tests to standart bucket (using mocha):
+Each adapter could add specific tests to standart bucket:
 
 ```javascript
-describe('your adapter', function(){
-    it('should do something special', function (done) {
-        done();
+// adapter.test.js
+describe('myadapter', function(){
+    before(function(){
+        // inject your global.getSchema
+        require('./init.js');
     });
+    // Call the common adapter tests (everything should pass)
+    require('jugglingdb/test/common.batch.js');
+
+    // the include.test.js contain relation tests that your adapter should pass
+    require('jugglingdb/test/include.test.js');
 });
 ```
 
-Or it could tell core to skip some test from bucket:
-
-```javascript
-describe('adapter1', function(){
-    it('should have name of test case', function(done){
-        done();
-    });
-});
-describe('no-adapter', function(){
-    it('will be skipped', function(done){
-        done();
-    });
-});
-```
-
-To run tests use this command:
+To run tests use this command (will execute by default the `test` directory):
 
 ```bash
 mocha
@@ -396,7 +472,7 @@ If you have found a bug please try to write unit test before reporting. Before
 submit pull request make sure all tests still passed. Check
 [roadmap](http://jugglingdb.co/roadmap.3.html), github issues if you want to
 help. Contribution to docs highly appreciated. Contents of man pages and
-http://jugglingdb.co generated from md files stored in this repo at ./docs repo
+http://jugglingdb.co generated from md files stored in this repo at `./docs` repo
 
 ## MIT License
 
