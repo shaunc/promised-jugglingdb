@@ -118,83 +118,83 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
   <tbody>
     <!-- Firebird -->
     <tr>
-      <td><a href="http://firebirdsql.org"><img src="http://firebirdsql.org/favicon.ico" alt="Firebird"/></a> Firebird</td>
-      <td><a href="http://github.com/hgourvest/jugglingdb-firebird">jugglingdb-firebird</a></td>
-      <td><a href="http://github.com/hgourvest">Henri Gourvest</a></td>
+      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://github.com/1602/jugglingdb/raw/master/media/firebirdsql.ico" alt="Firebird"/></a> Firebird</td>
+      <td><a href="http://github.com/hgourvest/jugglingdb-firebird" target="_blank">jugglingdb-firebird</a></td>
+      <td><a href="http://github.com/hgourvest" target="_blank">Henri Gourvest</a></td>
       <td></td>
     </tr>
 
     <!-- MongoDB -->
     <tr>
-      <td><a href="http://www.mongodb.org"><img src="http://mongodb.ru/favicon.ico" alt="MongoDB" /></a> MongoDB</td>
-      <td><a href="https://github.com/jugglingdb/mongodb-adapter">jugglingdb/mongodb-adapter</a></td>
-      <td><a href="https://github.com/anatoliychakkaev">Anatoliy Chakkaev</a></td>
-      <td><a href="https://travis-ci.org/jugglingdb/mongodb-adapter"><img src="https://travis-ci.org/jugglingdb/mongodb-adapter.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://www.mongodb.org" target="_blank"><img src="https://github.com/1602/jugglingdb/raw/master/media/mongodb.ico" alt="MongoDB" /></a> MongoDB</td>
+      <td><a href="https://github.com/jugglingdb/mongodb-adapter" target="_blank">jugglingdb/mongodb-adapter</a></td>
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
+      <td><a href="https://travis-ci.org/jugglingdb/mongodb-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/mongodb-adapter.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
     <!-- MySQL -->
     <tr>
-      <td><a href="http://www.mysql.com/"><img src="https://github.com/1602/jugglingdb/raw/master/media/mysql.ico" style="vertical-align:middle"" alt="MySQL" /></a> MySQL</td>
-      <td><a href="https://github.com/jugglingdb/mysql-adapter">jugglingdb/mysql</a></td>
-      <td><a href="https://github.com/dgsan">dgsan</a></td>
-      <td><a href="https://travis-ci.org/jugglingdb/mysql-adapter"><img src="https://travis-ci.org/jugglingdb/mysql-adapter.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://www.mysql.com/" target="_blank"><img src="https://github.com/1602/jugglingdb/raw/master/media/mysql.ico" style="vertical-align:middle"" alt="MySQL" /></a> MySQL</td>
+      <td><a href="https://github.com/jugglingdb/mysql-adapter" target="_blank">jugglingdb/mysql</a></td>
+      <td><a href="https://github.com/dgsan" target="_blank">dgsan</a></td>
+      <td><a href="https://travis-ci.org/jugglingdb/mysql-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/mysql-adapter.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
     <!-- CouchDB / nano -->
     <tr>
-      <td><a href="http://couchdb.apache.org/"><img width="16" src="http://couchdb.apache.org/favicon.ico" style="vertical-align:middle"" alt="CouchDB" /></a> CouchDB / nano</td>
-      <td><a href="https://github.com/jugglingdb/nano-adapter">jugglingdb/nano-adapter</a></td>
-      <td><a href="https://github.com/nrw">Nicholas Westlake</a></td>
-      <td><a href="https://travis-ci.org/jugglingdb/nano-adapter"><img src="https://travis-ci.org/jugglingdb/nano-adapter.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://couchdb.apache.org/" target="_blank"><img width="16" src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/favicon.ico" style="vertical-align:middle"" alt="CouchDB" /></a> CouchDB / nano</td>
+      <td><a href="https://github.com/jugglingdb/nano-adapter" target="_blank">jugglingdb/nano-adapter</a></td>
+      <td><a href="https://github.com/nrw" target="_blank">Nicholas Westlake</a></td>
+      <td><a href="https://travis-ci.org/jugglingdb/nano-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/nano-adapter.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
     <!-- PostgreSQL -->
     <tr>
-      <td><a href="http://www.postgresql.org/"><img src="http://www.postgresql.org/favicon.ico" style="vertical-align:middle"" alt="PostgreSQL" /></a> PostgreSQL</td>
-      <td><a href="https://github.com/jugglingdb/postgres-adapter">jugglingdb/postgres-adapter</a></td>
-      <td><a href="https://github.com/anatoliychakkaev">Anatoliy Chakkaev</a></td>
-      <td><a href="https://travis-ci.org/jugglingdb/postgres-adapter"><img src="https://travis-ci.org/jugglingdb/postgres-adapter.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://www.postgresql.org/" target="_blank"><img src="http://www.postgresql.org/favicon.ico" style="vertical-align:middle"" alt="PostgreSQL" /></a> PostgreSQL</td>
+      <td><a href="https://github.com/jugglingdb/postgres-adapter" target="_blank">jugglingdb/postgres-adapter</a></td>
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
+      <td><a href="https://travis-ci.org/jugglingdb/postgres-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/postgres-adapter.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
     <!-- Redis -->
     <tr>
-      <td><a href="http://redis.io/"><img src="http://redis.io/images/favicon.png" alt="Redis" /></a> Redis</td>
-      <td><a href="https://github.com/jugglingdb/redis-adapter">jugglingdb-redis</a></td>
-      <td><a href="https://github.com/anatoliychakkaev">Anatoliy Chakkaev</a></td>
-      <td><a href="https://travis-ci.org/jugglingdb/redis-adapter"><img src="https://travis-ci.org/jugglingdb/redis-adapter.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://redis.io/" target="_blank"><img src="http://redis.io/images/favicon.png" alt="Redis" /></a> Redis</td>
+      <td><a href="https://github.com/jugglingdb/redis-adapter" target="_blank">jugglingdb-redis</a></td>
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
+      <td><a href="https://travis-ci.org/jugglingdb/redis-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/redis-adapter.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
     <!-- RethinkDB -->
     <tr>
-      <td><a href="http://www.rethinkdb.com/"><img src="http://www.rethinkdb.com/favicon.ico" alt="RethinkDB" width="16" height="16" /></a> RethinkDB</td>
-      <td><a href="https://github.com/fuwaneko/jugglingdb-rethink">jugglingdb-rethink</a></td>
-      <td><a href="https://github.com/fuwaneko">Tewi Inaba</a></td>
-      <td><a href="https://travis-ci.org/fuwaneko/jugglingdb-rethink"><img src="https://travis-ci.org/fuwaneko/jugglingdb-rethink.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://www.rethinkdb.com/" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/rethinkdb.ico" alt="RethinkDB" width="16" height="16" /></a> RethinkDB</td>
+      <td><a href="https://github.com/fuwaneko/jugglingdb-rethink" target="_blank">jugglingdb-rethink</a></td>
+      <td><a href="https://github.com/fuwaneko" target="_blank"Tewi Inaba</a></td>
+      <td><a href="https://travis-ci.org/fuwaneko/jugglingdb-rethink" target="_blank"><img src="https://travis-ci.org/fuwaneko/jugglingdb-rethink.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
     <!-- SQLite -->
     <tr>
-      <td><a href="http://www.sqlite.org/"><img width="16" src="https://github.com/1602/jugglingdb/raw/master/media/sqlite.png" style="vertical-align:middle"" alt="SQLite" /></a> SQLite</td>
-      <td><a href="https://github.com/jugglingdb/sqlite3-adapter">jugglingdb/sqlite3-adapter</a></td>
-      <td><a href="https://github.com/anatoliychakkaev">Anatoliy Chakkaev</a></td>
-      <td><a href="https://travis-ci.org/jugglingdb/sqlite3-adapter"><img src="https://travis-ci.org/jugglingdb/sqlite3-adapter.png?branch=master" alt="Build Status" /></a></td>
+      <td><a href="http://www.sqlite.org/" target="_blank"><img width="16" src="https://github.com/1602/jugglingdb/raw/master/media/sqlite.png" style="vertical-align:middle"" alt="SQLite" /></a> SQLite</td>
+      <td><a href="https://github.com/jugglingdb/sqlite3-adapter" target="_blank">jugglingdb/sqlite3-adapter</a></td>
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
+      <td><a href="https://travis-ci.org/jugglingdb/sqlite3-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/sqlite3-adapter.png?branch=master" alt="Build Status" /></a></td>
     </tr>
     <tr>
       <td>WebService</td>
       <td>built-in</td>
-      <td><a href="https://github.com/anatoliychakkaev">Anatoliy Chakkaev</a></td>
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
       <td>n/a</td>
     </tr>
     <tr>
       <td>Memory (bogus)</td>
       <td>built-in</td>
-      <td><a href="https://github.com/anatoliychakkaev">Anatoliy Chakkaev</a></td>
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
       <td>n/a</td>
     </tr>
     <tr>
       <td>Neo4j</td>
       <td>built-in <i>TODO: move</i></td>
-      <td><a href="https://github.com/anatoliychakkaev"><strike>Anatoliy Chakkaev</strike></a> <u>/!\</u> Looking for
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank"><strike>Anatoliy Chakkaev</strike></a> :warning: Looking for
       maintainer</td>
       <td>n/a</td>
     </tr>
@@ -442,7 +442,7 @@ describe('myadapter', function(){
         // inject your global.getSchema
         require('./init.js');
     });
-    
+
     // Call the common adapter tests (everything should pass)
     require('jugglingdb/test/common.batch.js');
 
