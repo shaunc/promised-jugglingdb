@@ -210,9 +210,8 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
 
 If you want to create your own jugglingdb adapter, you should publish your
 adapter package with name `jugglingdb-ADAPTERNAME`. Creating adapter is simple,
-check [jugglingdb/redis-adapter](https://github.com/jugglingdb/redis-adapter) for example. JugglingDB core
-exports common tests each adapter should pass, you could create your adapter in
-TDD style, check that adapter pass all tests defined in `test/common_test.js`.
+check [jugglingdb/redis-adapter](https://github.com/jugglingdb/redis-adapter) for example.
+For more information, see the [Testing](#testing) section below.
 
 ## Usage
 
