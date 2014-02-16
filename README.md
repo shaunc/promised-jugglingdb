@@ -118,7 +118,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
   <tbody>
     <!-- Firebird -->
     <tr>
-      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://github.com/pocesar/promised-jugglingdb/raw/master/media/firebirdsql.ico" alt="Firebird"/></a> Firebird</td>
+      <td><a href="http://firebirdsql.org" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/firebirdsql.ico" alt="Firebird"/></a> Firebird</td>
       <td><a href="http://github.com/hgourvest/jugglingdb-firebird" target="_blank">jugglingdb-firebird</a></td>
       <td><a href="http://github.com/hgourvest" target="_blank">Henri Gourvest</a></td>
       <td></td>
@@ -142,7 +142,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
 
     <!-- CouchDB / nano -->
     <tr>
-      <td><a href="http://couchdb.apache.org/" target="_blank"><img width="16" src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/favicon.ico" style="vertical-align:middle"" alt="CouchDB" /></a> CouchDB / nano</td>
+      <td><a href="http://couchdb.apache.org/" target="_blank"><img width="16" src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/couchdb.ico" style="vertical-align:middle"" alt="CouchDB" /></a> CouchDB / nano</td>
       <td><a href="https://github.com/jugglingdb/nano-adapter" target="_blank">jugglingdb/nano-adapter</a></td>
       <td><a href="https://github.com/nrw" target="_blank">Nicholas Westlake</a></td>
       <td><a href="https://travis-ci.org/jugglingdb/nano-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/nano-adapter.png?branch=master" alt="Build Status" /></a></td>
