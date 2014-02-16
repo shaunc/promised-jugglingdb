@@ -442,6 +442,7 @@ describe('myadapter', function(){
         // inject your global.getSchema
         require('./init.js');
     });
+    
     // Call the common adapter tests (everything should pass)
     require('jugglingdb/test/common.batch.js');
 
@@ -450,10 +451,10 @@ describe('myadapter', function(){
 });
 ```
 
-To run tests use this command (will execute by default the `test` directory):
+If you are using mocha, to run tests use this command (will search for files in the `test` directory by default):
 
 ```bash
-mocha
+mocha test/*.test.js
 ```
 
 and to skip, for example `adapter` call mocha with `--grep`:
