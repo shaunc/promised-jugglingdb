@@ -6,26 +6,28 @@ describe('include', function (){
   before(setup);
 
   it('should fetch belongsTo relation', function (done){
-    Passport.all({include: 'owner'}, function (err, passports){
-      expect(passports.length).to.be.ok();
+    Passport
+      .all({include: 'owner'})
+      .done(function (passports){
+        expect(passports.length).to.be.ok();
 
-      passports.forEach(function (p){
-        expect(p.__cachedRelations).to.have.property('owner');
-        var owner = p.__cachedRelations.owner;
-        if (!p.ownerId) {
-          expect(owner).to.not.be.ok();
-        } else {
-          expect(owner).to.be.ok();
-          expect(owner.id).to.equal(p.ownerId);
-        }
+        passports.forEach(function (p){
+          expect(p.__cachedRelations).to.have.property('owner');
+          var owner = p.__cachedRelations.owner;
+          if (!p.ownerId) {
+            expect(owner).to.not.be.ok();
+          } else {
+            expect(owner).to.be.ok();
+            expect(owner.id).to.equal(p.ownerId);
+          }
+        });
+
+        done();
       });
-      done();
-    });
   });
 
   it('should fetch hasMany relation', function (done){
-    User.all({include: 'posts'}, function (err, users){
-      expect(err).to.not.be.ok();
+    User.all({include: 'posts'}).done(function (users){
       expect(users).to.be.ok();
       expect(users.length).to.be.ok();
       users.forEach(function (u){
@@ -35,12 +37,14 @@ describe('include', function (){
         });
       });
       done();
+    }, function(){
+      expect().fail('Should not fail');
+      done();
     });
   });
 
   it('should fetch Passport - Owner - Posts', function (done){
-    Passport.all({include: {owner: 'posts'}}, function (err, passports){
-      expect(err).to.not.be.ok();
+    Passport.all({include: {owner: 'posts'}}).done(function (passports){
       expect(passports).to.be.ok();
       expect(passports.length).to.be.ok();
       passports.forEach(function (p){
@@ -58,14 +62,16 @@ describe('include', function (){
         }
       });
       done();
+    }, function(){
+      expect().fail('Should not fail');
+      done();
     });
   });
 
   it('should fetch Passports - User - Posts - User', function (done){
     Passport.all({
       include: {owner: {posts: 'author'}}
-    }, function (err, passports){
-      expect(err).to.not.be.ok();
+    }).done(function (passports){
       expect(passports).to.be.ok();
       expect(passports.length).to.be.ok();
       passports.forEach(function (p){
@@ -86,12 +92,14 @@ describe('include', function (){
         }
       });
       done();
+    }, function(){
+      expect().fail('Should not fail');
+      done();
     });
   });
 
   it('should fetch User - Posts AND Passports', function (done){
-    User.all({include: ['posts', 'passports']}, function (err, users){
-      expect(err).to.not.be.ok();
+    User.all({include: ['posts', 'passports']}).done(function (users){
       expect(users).to.be.ok();
       expect(users.length).to.be.ok();
       users.forEach(function (user){
@@ -104,6 +112,9 @@ describe('include', function (){
           expect(pp.ownerId).to.equal(user.id);
         });
       });
+      done();
+    }, function(){
+      expect().fail('Should not fail');
       done();
     });
   });

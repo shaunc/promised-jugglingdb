@@ -77,7 +77,7 @@ Article
     return this.article2.tags.add(this.tag);
 })
 .then(function(){
-    return this.article2.tags.remove(articles.tag);
+    return this.article2.tags.remove(this.tag);
 })
 .then(function(){
     return this.article2.tags(true);
@@ -86,10 +86,10 @@ Article
     return this.article1.tags(true);
 })
 .catch(TypeError, ReferenceError, function(err){
-    console.log('An error ocurred', err);
+    console.log('A programming error ocurred', err);
 })
 .catch(ValidationError, function(err){
-    console.log('An error ocurred', err);
+    console.log('A validation error ocurred', err);
 })
 .done(function(tags){
     console.log('Finished with article1 tags', tags);
@@ -168,7 +168,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
     <tr>
       <td><a href="http://www.rethinkdb.com/" target="_blank"><img src="https://raw.github.com/pocesar/promised-jugglingdb/master/media/rethinkdb.ico" alt="RethinkDB" width="16" height="16" /></a> RethinkDB</td>
       <td><a href="https://github.com/fuwaneko/jugglingdb-rethink" target="_blank">jugglingdb-rethink</a></td>
-      <td><a href="https://github.com/fuwaneko" target="_blank"Tewi Inaba</a></td>
+      <td><a href="https://github.com/fuwaneko" target="_blank">Dmitry Gorbunov</a></td>
       <td><a href="https://travis-ci.org/fuwaneko/jugglingdb-rethink" target="_blank"><img src="https://travis-ci.org/fuwaneko/jugglingdb-rethink.png?branch=master" alt="Build Status" /></a></td>
     </tr>
 
@@ -194,7 +194,7 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
     <tr>
       <td>Neo4j</td>
       <td>built-in <i>TODO: move</i></td>
-      <td><a href="https://github.com/anatoliychakkaev" target="_blank"><strike>Anatoliy Chakkaev</strike></a> :warning: Looking for
+      <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a> :warning: Looking for
       maintainer</td>
       <td>n/a</td>
     </tr>
