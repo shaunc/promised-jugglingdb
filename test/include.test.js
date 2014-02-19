@@ -8,7 +8,7 @@ describe('include', function (){
   it('should fetch belongsTo relation', function (done){
     Passport
       .all({include: 'owner'})
-      .done(function (passports){
+      .then(function (passports){
         expect(passports.length).to.be.ok();
 
         passports.forEach(function (p){
@@ -21,13 +21,15 @@ describe('include', function (){
             expect(owner.id).to.equal(p.ownerId);
           }
         });
-
-        done();
-      });
+      }).catch(function(e){
+        expect(function(){
+          throw new Error(e);
+        }).to.not.throwError();
+      }).done(done);
   });
 
   it('should fetch hasMany relation', function (done){
-    User.all({include: 'posts'}).done(function (users){
+    User.all({include: 'posts'}).then(function (users){
       expect(users).to.be.ok();
       expect(users.length).to.be.ok();
       users.forEach(function (u){
@@ -36,15 +38,15 @@ describe('include', function (){
           expect(p.userId).to.equal(u.id);
         });
       });
-      done();
-    }, function(){
-      expect().fail('Should not fail');
-      done();
-    });
+    }).catch(function (){
+      expect(function (){
+        throw new Error('Should not fail');
+      }).to.not.throwError();
+    }).done(done);
   });
 
   it('should fetch Passport - Owner - Posts', function (done){
-    Passport.all({include: {owner: 'posts'}}).done(function (passports){
+    Passport.all({include: {owner: 'posts'}}).then(function (passports){
       expect(passports).to.be.ok();
       expect(passports.length).to.be.ok();
       passports.forEach(function (p){
@@ -61,17 +63,17 @@ describe('include', function (){
           });
         }
       });
-      done();
-    }, function(){
-      expect().fail('Should not fail');
-      done();
-    });
+    }).catch(function (){
+      expect(function (){
+        throw new Error('Should not fail');
+      }).to.not.throwError();
+    }).done(done);
   });
 
   it('should fetch Passports - User - Posts - User', function (done){
     Passport.all({
       include: {owner: {posts: 'author'}}
-    }).done(function (passports){
+    }).then(function (passports){
       expect(passports).to.be.ok();
       expect(passports.length).to.be.ok();
       passports.forEach(function (p){
@@ -91,15 +93,15 @@ describe('include', function (){
           });
         }
       });
-      done();
-    }, function(){
-      expect().fail('Should not fail');
-      done();
-    });
+    }).catch(function (){
+      expect(function (){
+        throw new Error('Should not fail');
+      }).to.not.throwError();
+    }).done(done);
   });
 
   it('should fetch User - Posts AND Passports', function (done){
-    User.all({include: ['posts', 'passports']}).done(function (users){
+    User.all({include: ['posts', 'passports']}).then(function (users){
       expect(users).to.be.ok();
       expect(users.length).to.be.ok();
       users.forEach(function (user){
@@ -112,11 +114,11 @@ describe('include', function (){
           expect(pp.ownerId).to.equal(user.id);
         });
       });
-      done();
-    }, function(){
-      expect().fail('Should not fail');
-      done();
-    });
+    }).catch(function (){
+      expect(function (){
+        throw new Error('Should not fail');
+      }).to.not.throwError();
+    }).done(done);
   });
 
 });
@@ -142,11 +144,12 @@ function setup(done){
   User.hasMany('posts', {foreignKey: 'userId'});
   Post.belongsTo('author', {model: User, foreignKey: 'userId'});
 
-  db.automigrate(function (){
+  db.automigrate().done(function (){
     var createdUsers = [];
     var createdPassports = [];
     var createdPosts = [];
     createUsers();
+
     function createUsers(){
       clearAndCreate(
         User,
@@ -195,13 +198,12 @@ function setup(done){
         }
       );
     }
-
   });
 }
 
 function clearAndCreate(model, data, callback){
   var createdItems = [];
-  model.destroyAll(function (){
+  model.destroyAll().done(function (){
     nextItem(null, null);
   });
 
@@ -215,7 +217,11 @@ function clearAndCreate(model, data, callback){
       callback(createdItems);
       return;
     }
-    model.create(data[itemIndex], nextItem);
+
+    model.create(data[itemIndex]).done(function (item){
+      nextItem(null, item);
+    }, nextItem);
+
     itemIndex++;
   }
 }

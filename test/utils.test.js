@@ -59,13 +59,17 @@ describe('utils', function (){
       expect(obj.readonly).to.equal(1);
       try {
         obj.readonly = 2;
-        throw new Error('Must throw TypeError');
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
       } catch (e) {
         expect(e).to.be.a(TypeError);
       }
       try {
         delete obj.readonly;
-        throw new Error('Must throw TypeError');
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
       } catch (e) {
         expect(e).to.be.a(TypeError);
       }

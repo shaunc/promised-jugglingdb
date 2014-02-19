@@ -35,18 +35,17 @@ describe('validations', function (){
       createdByScript: Boolean,
       updatedAt      : Date
     });
-    db.automigrate(done);
+    db.automigrate().done(done);
   });
 
   beforeEach(function (done){
-    User.destroyAll(function (){
+    User.destroyAll().then(function (){
       delete User._validations;
-      done();
-    });
+    }).done(done);
   });
 
-  after(function (){
-    db.disconnect();
+  after(function (done){
+    db.disconnect().done(done);
   });
 
   describe('commons', function (){

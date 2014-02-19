@@ -14,37 +14,37 @@ describe('manipulation', function (){
       createdAt: {type: Number, default: Date.now, name: 'created_at'}
     });
 
-    db.automigrate(done);
+    db.automigrate().done(done);
 
   });
 
   describe('create', function (){
 
     before(function (done){
-      Person.destroyAll(done);
+      Person.destroyAll().done(done);
     });
 
     it('should create instance', function (done){
-      Person.create({name: 'Anatoliy'}, function (err, p){
+      Person.create({name: 'Anatoliy'})
+      .bind({})
+      .then(function (p){
+        this.p = p;
         expect(p.name).to.equal('Anatoliy');
-        expect(err).to.not.be.ok();
         expect(p).to.be.ok();
-        Person.find(p.id, function (err, person){
-          expect(person.id).to.equal(p.id);
-          expect(person.name).to.equal('Anatoliy');
-          done();
-        });
-      });
+        return Person.find(p.id);
+      })
+      .then(function (person){
+        expect(person.id).to.equal(this.p.id);
+        expect(person.name).to.equal('Anatoliy');
+      })
+      .done(done);
     });
 
     it('should return instance of object', function (done){
-      var person = Person.create(function (err, p){
-        expect(p.id).to.eql(person.id);
-        done();
-      });
-      expect(person).to.be.ok();
-      expect(person).to.be.a(Person);
-      expect(person.id).to.not.be.ok();
+      Person.create().then(function(p){
+        expect(p).to.be.a(Person);
+        expect(p.id).to.be.ok();
+      }).done(done);
     });
 
     it('should work when called without callback', function (done){
@@ -60,16 +60,20 @@ describe('manipulation', function (){
     });
 
     it('should create instance with blank data', function (done){
-      Person.create(function (err, p){
-        expect(err).to.not.be.ok();
+      Person
+      .create()
+      .bind({})
+      .then(function (p){
+        this.p = p;
         expect(p).to.be.ok();
         expect(p.name).to.not.be.ok();
-        Person.find(p.id, function (err, person){
-          expect(person.id).to.equal(p.id);
-          expect(person.name).to.not.be.ok();
-          done();
-        });
-      });
+        return Person.find(p.id);
+      })
+      .then(function (person){
+        expect(person.id).to.equal(this.p.id);
+        expect(person.name).to.not.be.ok();
+      })
+      .done(done);
     });
 
     it('should work when called with no data and callback', function (done){
@@ -90,27 +94,22 @@ describe('manipulation', function (){
         {name: 'Boltay'},
         {}
       ];
-      expect(Person.create(batch, function (e, ps){
-        expect(e).to.not.be.ok();
+      Person.create(batch).then(function(ps){
         expect(ps).to.be.ok();
         expect(ps).to.be.an('array');
         expect(ps).to.have.length(batch.length);
 
         Person.validatesPresenceOf('name');
-        expect(Person.create(batch, function (errors, persons){
-          delete Person._validations;
-          expect(errors).to.be.ok();
-          expect(errors).to.have.length(batch.length);
-          expect(errors[0]).to.not.be.ok();
-          expect(errors[1]).to.not.be.ok();
-          expect(errors[2]).to.be.ok();
-
-          expect(persons).to.be.ok();
-          expect(persons).to.have.length(batch.length);
-          expect(persons[0].errors).to.not.be.ok();
-          done();
-        })).to.be.an('array');
-      })).to.have.length(3);
+        return Person.create(batch);
+      })
+      .catch(function (errors){
+        delete Person._validations;
+        expect(errors).to.be.ok();
+        expect(errors).to.have.length(batch.length);
+        expect(errors[0]).to.not.be.ok();
+        expect(errors[1]).to.not.be.ok();
+        expect(errors[2]).to.be.ok();
+      }).done(done);
     });
   });
 
@@ -118,96 +117,88 @@ describe('manipulation', function (){
 
     it('should save new object', function (done){
       var p = new Person;
-      p.save(function (err){
-        expect(err).to.not.be.ok();
+      p.save().then(function (){
         expect(p.id).to.be.ok();
-        done();
-      });
+      }).done(done);
     });
 
     it('should save existing object', function (done){
-      Person.findOne(function (err, p){
-        expect(err).to.not.be.ok();
+      Person.findOne()
+      .bind({})
+      .then(function (p){
+        this.p = p;
         p.name = 'Hans';
         expect(p.propertyChanged('name')).to.be(true);
-        p.save(function (err){
-          expect(err).to.not.be.ok();
-          expect(p.propertyChanged('name')).to.be(false);
-          Person.findOne(function (err, p){
-            expect(err).to.not.be.ok();
-            expect(p.name).to.equal('Hans');
-            expect(p.propertyChanged('name')).to.be(false);
-            done();
-          });
-        });
-      });
+        return p.save();
+      }).then(function (){
+        expect(this.p.propertyChanged('name')).to.be(false);
+        return Person.findOne();
+      }).then(function (p){
+        expect(p.name).to.equal('Hans');
+        expect(p.propertyChanged('name')).to.be(false);
+      }).done(done);
     });
 
     it('should save invalid object (skipping validation)', function (done){
-      Person.findOne(function (err, p){
-        expect(err).to.not.be.ok();
-        p.isValid = function (done){
-          process.nextTick(done);
-          return false;
+      Person.findOne()
+      .bind({})
+      .then(function (p){
+        p.isValid = function (){
+          expect(function (){
+            throw new Error('isValid should be skipped');
+          }).to.not.throwError();
         };
         p.name = 'Nana';
-        p.save(function (err){
-          expect(err).to.be.ok();
-          expect(p.propertyChanged('name')).to.be(true);
-          p.save({validate: false}, function (err){
-            expect(err).to.not.be.ok();
-            expect(p.propertyChanged('name')).to.be(false);
-            done();
-          });
-        });
-      });
+        this.p = p;
+        return p.save();
+      }).catch(function (err){
+        expect(err).to.be.ok();
+        expect(this.p.propertyChanged('name')).to.be(true);
+        return this.p.save({validate: false});
+      }).then(function (p){
+        expect(p.propertyChanged('name')).to.be(false);
+      }).done(done);
     });
 
     it('should save invalid new object (skipping validation)', function (done){
       var p = new Person();
       expect(p.isNewRecord()).to.be(true);
 
-      p.isValid = function (done){
-        if (done) {
-          process.nextTick(done);
-        }
-        return false;
-      };
-      expect(p.isValid()).to.be(false);
-
-      p.save({ validate: false }, function (err){
-        expect(err).to.not.be.ok();
-        expect(p.isNewRecord()).to.be(false);
-        expect(p.isValid()).to.be(false);
-        done();
-      });
-    });
-
-    it('should save throw error on validation', function (){
-      Person.findOne(function (err, p){
-        expect(err).to.not.be.ok();
-        p.isValid = function (cb){
-          cb(false);
-          return false;
-        };
+      p.isValid = function (){
         expect(function (){
-          p.save({
-            'throws': true
-          });
-        }).to.throwError('Validation error');
-      });
+          throw new Error('isValid should be skipped');
+        }).to.not.throwError();
+      };
+
+      p.save({ validate: false }).then(function(){
+        expect(p.isNewRecord()).to.be(false);
+      }).done(done);
     });
 
-    it('should save with custom fields', function (){
-      Person.create({name: 'Anatoliy'}, function (err, p){
+    it('should save throw error on validation', function (done){
+      Person.findOne()
+      .then(function (p){
+        p.isValid = function (){
+          throw new Error('Invalid');
+        };
+
+        return p.save();
+      })
+      .catch(function (err){
+        expect(err).to.be.an(Error);
+      })
+      .done(done);
+    });
+
+    it('should save with custom fields', function (done){
+      Person.create({name: 'Anatoliy'}).then(function (p){
         expect(p.id).to.be.ok();
         expect(p.name).to.be.ok();
         expect(p['full_name']).to.not.be.ok();
         var storedObj = JSON.parse(db.adapter.cache.Person[p.id]);
         expect(storedObj['full_name']).to.be.ok();
-      });
+      }).done(done);
     });
-
   });
 
   describe('updateAttributes', function (){
@@ -215,48 +206,50 @@ describe('manipulation', function (){
 
     before(function (done){
       Person.destroyAll(function (){
-        person = Person.create(done);
+        Person.create().then(function (p){
+          person = p;
+        }).done(done);
       });
     });
 
     it('should update one attribute', function (done){
-      person.updateAttribute('name', 'Paul Graham', function (err, p){
-        expect(err).to.not.be.ok();
-        Person.all(function (e, ps){
-          expect(err).to.not.be.ok();
+      person
+        .updateAttribute('name', 'Paul Graham')
+        .then(function (p){
+          return Person.all();
+        })
+        .then(function (ps){
           expect(ps).to.have.length(1);
           expect(ps.pop().name).to.equal('Paul Graham');
-          done();
-        });
-      });
+        })
+        .done(done);
     });
   });
 
   describe('destroy', function (){
 
     it('should destroy record', function (done){
-      Person.create(function (err, p){
-        p.destroy(function (err){
-          expect(err).to.not.be.ok();
-          Person.exists(p.id, function (err, ex){
-            expect(ex).to.not.be.ok();
-            done();
-          });
-        });
-      });
+      Person.create()
+      .bind({})
+      .then(function (p){
+        this.p = p;
+        return p.destroy();
+      }).then(function (){
+        return Person.exists(this.p.id);
+      }).then(function(exists){
+        expect(exists).to.equal(false);
+      }).done(done);
     });
 
     it('should destroy all records', function (done){
-      Person.destroyAll(function (err){
-        expect(err).to.not.be.ok();
-        Person.all(function (err, posts){
-          expect(posts).to.have.length(0);
-          Person.count(function (err, count){
-            expect(count).to.be(0);
-            done();
-          });
-        });
-      });
+      Person.destroyAll().then(function (){
+        return Person.all();
+      }).then(function (posts){
+        expect(posts).to.have.length(0);
+        return Person.count();
+      }).then(function(count){
+        expect(count).to.be(0);
+      }).done(done);
     });
 
     // TODO: implement destroy with filtered set
@@ -270,7 +263,9 @@ describe('manipulation', function (){
       for (var i = 0; i < 507; i += 1) {
         ps.push({name: 'Person ' + i});
       }
-      Person.create(ps, next);
+      Person.create(ps).done(function(){
+        next();
+      });
     });
 
     it('should iterate through the batch of objects', function (done){
@@ -278,10 +273,10 @@ describe('manipulation', function (){
       Person.iterate({batchSize: 100}, function (person, next, i){
         num += 1;
         next();
-      }, function (err){
+      }).then(function (batches){
         expect(num).to.equal(507);
-        done();
-      });
+        expect(batches).to.equal(6);
+      }).done(done);
     });
 
     it('should take limit into account', function (done){
@@ -289,22 +284,22 @@ describe('manipulation', function (){
       Person.iterate({batchSize: 20, limit: 21}, function (person, next, i){
         num += 1;
         next();
-      }, function (err){
+      }).then(function (batches){
         expect(num).to.equal(21);
-        done();
-      });
+        expect(batches).to.equal(2);
+      }).done(done);
     });
 
     it('should process in concurrent mode', function (done){
       var num = 0, time = Date.now();
       Person.iterate({batchSize: 10, limit: 21, concurrent: true}, function (person, next, i){
         num += 1;
-        setTimeout(next, 20);
-      }, function (err){
+        setTimeout(next, 10);
+      }).then(function (batches){
         expect(num).to.equal(21);
-        expect(Date.now() - time).to.be.below(100);
-        done();
-      });
+        expect(Date.now() - time <= 100).to.be(true);
+        expect(batches).to.equal(3);
+      }).done(done);
     });
   });
 

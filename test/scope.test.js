@@ -1,4 +1,3 @@
-// This test written in mocha+should.js
 var db, Railway, Station;
 
 describe('sc0pe', function (){
@@ -18,59 +17,61 @@ describe('sc0pe', function (){
   });
 
   beforeEach(function (done){
-    Railway.destroyAll(function (){
-      Station.destroyAll(done);
-    });
+    Railway.destroyAll().then(function (){
+      return Station.destroyAll();
+    }).done(done);
   });
 
   it('should define scope with query', function (done){
     Station.scope('active', {where: {isActive: true}});
-    Station.active.create(function (err, station){
-      expect(err).to.not.be.ok();
+    Station.active
+    .create()
+    .then(function (station){
       expect(station).to.be.ok();
       expect(station.isActive).to.be.ok();
       expect(station.isActive).to.be(true);
-      done();
-    });
+    }).done(done);
   });
 
   it('should allow scope chaining', function (done){
     Station.scope('active', {where: {isActive: true}});
     Station.scope('subway', {where: {isUndeground: true}});
-    Station.active.subway.create(function (err, station){
-      expect(err).to.not.be.ok();
+
+    Station.active.subway
+    .create()
+    .then(function (station){
       expect(station).to.be.ok();
       expect(station.isActive).to.be(true);
       expect(station.isUndeground).to.be(true);
-      done();
-    })
+    }).done(done);
   });
 
   it('should query all', function (done){
     Station.scope('active', {where: {isActive: true}});
     Station.scope('inactive', {where: {isActive: false}});
     Station.scope('ground', {where: {isUndeground: true}});
-    Station.active.ground.create(function (){
-      Station.inactive.ground.create(function (){
-        Station.ground.inactive(function (err, ss){
-          expect(ss).to.have.length(1);
-          done();
-        });
-      });
-    });
+
+    Station.active.ground.create()
+    .then(function (){
+      return Station.inactive.ground.create();
+    }).then(function (){
+      return Station.ground.inactive();
+    }).then(function(ss){
+      expect(ss).to.have.length(1);
+    }).done(done);
   });
 
   it('should destroy all', function (done){
-    Station.inactive.ground.create(function (){
-      Station.inactive(function (err, ss){
-        expect(ss).to.have.length(1);
-        Station.inactive.destroyAll(function (){
-          Station.inactive(true, function (err, ss){
-            expect(ss).to.have.length(0);
-            done();
-          });
-        });
-      });
-    });
+    Station.inactive.ground.create()
+    .then(function (){
+      return Station.inactive();
+    }).then(function (ss){
+      expect(ss).to.have.length(1);
+      return Station.inactive.destroyAll();
+    }).then(function (){
+      return Station.inactive(true);
+    }).then(function (ss){
+      expect(ss).to.have.length(0);
+    }).done(done);
   });
 });

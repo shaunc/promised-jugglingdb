@@ -6,7 +6,7 @@ describe('schema', function (){
   it('should define Model', function (){
     Model = db.define('Model');
     expect(Model.schema).to.eql(db);
-    var m = new Model;
+    var m = new AbstractClass;
     expect(m.schema).to.eql(db);
   });
 
@@ -46,12 +46,16 @@ describe('schema', function (){
             expect(c).to.equal(3);
             done();
           }, function(){
-            throw new Error('Should not be called');
+            expect(function(){
+              throw new Error('This should not be called');
+            }).to.not.throwError();
           });
         }, 100);
       });
     }, function(){
-      throw new Error('Should not be called');
+      expect(function(){
+        throw new Error('This should not be called');
+      }).to.not.throwError();
     });
   });
 

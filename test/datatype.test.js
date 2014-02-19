@@ -11,9 +11,10 @@ describe('datatypes', function (){
       bool: Boolean,
       list: {type: []},
     });
-    db.automigrate(function (){
-      Model.destroyAll(done);
-    });
+
+    db.automigrate().then(function(){
+      return Model.destroyAll();
+    }).done(done);
   });
 
   it('should keep types when get read data from db', function (done){
@@ -21,40 +22,49 @@ describe('datatypes', function (){
 
     Model.create({
       str: 'hello', date: d, num: '3', bool: 1, list: ['test']
-    }, function (err, m){
-      expect(err).to.not.be.ok();
+    }).then(function (m){
       expect(m.id).to.be.ok();
       expect(m.str).to.be.a('string');
       expect(m.num).to.be.a('number');
       expect(m.bool).to.be.a('boolean');
       id = m.id;
       testFind(testAll);
-    });
+    }, function(){
+      expect(function(){
+        throw new Error('This should not be called');
+      }).to.not.throwError();
+    }).done();
 
     function testFind(next){
-      Model.find(id, function (err, m){
-        expect(err).to.not.be.ok();
+      Model.find(id).then(function (m){
         expect(m).to.be.ok();
         expect(m.str).to.be.a('string');
         expect(m.num).to.be.a('number');
         expect(m.bool).to.be.a('boolean');
         expect(m.date).to.be.a(Date);
         expect(m.date.toString()).to.equal(d.toString(), 'Time must match');
-        next();
-      });
+      }, function(){
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
+      })
+      .done(next);
     }
 
     function testAll(){
-      Model.findOne(function (err, m){
-        expect(err).to.not.be.ok();
+      Model.findOne().then(function (m){
         expect(m).to.be.ok();
         expect(m.str).to.be.a('string');
         expect(m.num).to.be.a('number');
         expect(m.bool).to.be.a('boolean');
         expect(m.date).to.be.a(Date);
         expect(m.date.toString()).to.equal(d.toString(), 'Time must match');
-        done();
-      });
+      }, function(){
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
+      })
+      .done(done);
     }
 
   });

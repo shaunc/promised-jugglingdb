@@ -17,7 +17,7 @@ describe('hooks', function (){
       state   : String
     });
 
-    db.automigrate(done);
+    db.automigrate().done(done);
   });
 
   describe('behavior', function (){
@@ -25,15 +25,19 @@ describe('hooks', function (){
     it('should allow to break flow in case of error', function (done){
 
       var Model = db.define('Model');
+
       Model.beforeCreate = function (next, data){
         next(new Error('Fail'));
       };
 
-      Model.create(function (err, model){
-        expect(model).to.not.be.ok();
-        expect(err).to.be.ok();
-        done();
-      });
+      Model.create().then(function (model){
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
+      },function (err){
+        expect(err).to.be.an(Error);
+        expect(err.message).to.be('Fail');
+      }).done(done);
     });
   });
 
@@ -51,17 +55,16 @@ describe('hooks', function (){
     });
 
     it('should be triggered on create', function (done){
-      var user;
       User.afterInitialize = function (){
         if (this.name === 'Nickolay') {
           this.name += ' Rozental';
         }
       };
-      User.create({name: 'Nickolay'}, function (err, u){
+
+      User.create({name: 'Nickolay'}).then(function (u){
         expect(u.id).to.be.ok();
         expect(u.name).to.equal('Nickolay Rozental');
-        done();
-      });
+      }).done(done);
     });
 
   });
@@ -77,10 +80,12 @@ describe('hooks', function (){
 
     it('should not be triggered on new', function (){
       User.beforeCreate = function (next){
-        expect().fail('This should not be called');
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
         next();
       };
-      var u = new User();
+      (new User());
     });
 
     it('should be triggered on new+save', function (done){
@@ -89,16 +94,20 @@ describe('hooks', function (){
     });
 
     it('afterCreate should not be triggered on failed create', function (done){
-      var old = User.schema.adapter.create;
-      User.schema.adapter.create = function (modelName, id, cb){
+      sinon.stub(User.schema.adapter, 'create', function (modelName, id, cb){
         cb(new Error('error'));
-      };
+      });
 
       User.afterCreate = function (){
-        throw new Error('shouldn\'t be called');
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
       };
-      User.create(function (err, user){
-        User.schema.adapter.create = old;
+
+      User.create().catch(function(err){
+        expect(err).to.be.an(Error);
+      }).done(function (){
+        User.schema.adapter.create.restore();
         done();
       });
     });
@@ -118,14 +127,14 @@ describe('hooks', function (){
     });
 
     it('should be triggered on updateAttributes', function (done){
-      User.create(function (err, user){
+      User.create().then(function (user){
         addHooks('Save', done);
         user.updateAttributes({name: 'Anatoliy'});
       });
     });
 
     it('should be triggered on save', function (done){
-      User.create(function (err, user){
+      User.create().then(function (user){
         addHooks('Save', done);
         user.name = 'Hamburger';
         user.save();
@@ -133,7 +142,7 @@ describe('hooks', function (){
     });
 
     it('should save full object', function (done){
-      User.create(function (err, user){
+      User.create().then(function (user){
         User.beforeSave = function (next, data){
           expect(data).to.only.have.keys('id', 'name', 'email',
             'password', 'state');
@@ -148,19 +157,19 @@ describe('hooks', function (){
         data.password = 'hash';
         next();
       };
-      User.destroyAll(function (){
-        User.create({
+
+      User.destroyAll().then(function (){
+        return User.create({
           email   : 'james.bond@example.com',
           password: '53cr3t'
-        }, function (){
-          User.findOne({
-            where: {email: 'james.bond@example.com'}
-          }, function (err, jb){
-            expect(jb.password).to.equal('hash');
-            done();
-          });
         });
-      });
+      }).then(function (){
+        return User.findOne({
+          where: {email: 'james.bond@example.com'}
+        });
+      }).then(function (jb){
+        expect(jb.password).to.equal('hash');
+      }).done(done);
     });
 
     it('should save actual modifications on updateAttributes', function (done){
@@ -168,23 +177,22 @@ describe('hooks', function (){
         data.password = 'hash';
         next();
       };
-      User.destroyAll(function (){
-        User.create({
+      User.destroyAll().then(function (){
+        return User.create({
           email: 'james.bond@example.com'
-        }, function (err, u){
-          u.updateAttribute('password', 'new password', function (e, u){
-            expect(e).to.not.be.ok();
-            expect(u).to.be.ok();
-            expect(u.password).to.equal('hash');
-            User.findOne({
-              where: {email: 'james.bond@example.com'}
-            }, function (err, jb){
-              expect(jb.password).to.equal('hash');
-              done();
-            });
-          });
         });
-      });
+      }).then(function (u){
+        return u.updateAttribute('password', 'new password');
+      }).then(function (u){
+        expect(u).to.be.ok();
+        expect(u.password).to.equal('hash');
+
+        return User.findOne({
+          where: {email: 'james.bond@example.com'}
+        });
+      }).then(function (jb){
+        expect(jb.password).to.equal('hash');
+      }).done(done);
     });
 
   });
@@ -194,7 +202,9 @@ describe('hooks', function (){
 
     it('should not be triggered on create', function (){
       User.beforeUpdate = function (next){
-        expect().fail('This should not be called');
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
         next();
       };
       User.create();
@@ -202,21 +212,23 @@ describe('hooks', function (){
 
     it('should not be triggered on new+save', function (){
       User.beforeUpdate = function (next){
-        expect().fail('This should not be called');
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
         next();
       };
       (new User()).save();
     });
 
     it('should be triggered on updateAttributes', function (done){
-      User.create(function (err, user){
+      User.create().done(function (user){
         addHooks('Update', done);
         user.updateAttributes({name: 'Anatoliy'});
       });
     });
 
     it('should be triggered on save', function (done){
-      User.create(function (err, user){
+      User.create().done(function (user){
         addHooks('Update', done);
         user.name = 'Hamburger';
         user.save();
@@ -224,7 +236,7 @@ describe('hooks', function (){
     });
 
     it('should update limited set of fields', function (done){
-      User.create(function (err, user){
+      User.create().done(function (user){
         User.beforeUpdate = function (next, data){
           expect(data).to.only.have.keys('name', 'email');
           done();
@@ -235,16 +247,20 @@ describe('hooks', function (){
 
     it('should not trigger after-hook on failed save', function (done){
       User.afterUpdate = function (){
-        expect().fail('afterUpdate shouldn\'t be called');
+        expect(function(){
+          throw new Error('afterUpdate shouldn\'t be called');
+        }).to.not.throwError();
       };
-      User.create(function (err, user){
-        var save = User.schema.adapter.save;
-        User.schema.adapter.save = function (modelName, id, cb){
-          User.schema.adapter.save = save;
-          cb(new Error('Error'));
-        };
 
-        user.save(function (err){
+      User.create().done(function (user){
+        sinon.stub(User.schema.adapter, 'save', function (modelName, id, cb){
+          User.schema.adapter.save.restore();
+          cb(new Error('Error'));
+        });
+
+        user.save().catch(function(err){
+          expect(err).to.be.an(Error);
+        }).done(function(){
           done();
         });
       });
@@ -265,24 +281,31 @@ describe('hooks', function (){
         expect(hook).to.eql('called');
         next();
       };
-      User.create(function (err, user){
-        user.destroy(done);
-      });
+      User.create().then(function (user){
+        return user.destroy();
+      }).done(done);
     });
 
     it('should not trigger after-hook on failed destroy', function (done){
-      var destroy = User.schema.adapter.destroy;
-      User.schema.adapter.destroy = function (modelName, id, cb){
+      sinon.stub(User.schema.adapter, 'destroy', function (modelName, id, cb){
         cb(new Error('error'));
-      };
+      });
+
       User.afterDestroy = function (){
-        expect().fail('afterDestroy shouldn\'t be called');
+        expect(function(){
+          throw new Error('afterDestroy shouldn\'t be called');
+        }).to.not.throwError();
       };
-      User.create(function (err, user){
-        user.destroy(function (err){
-          User.schema.adapter.destroy = destroy;
-          done();
-        });
+
+      User.create().then(function (user){
+        return user.destroy();
+      })
+      .catch(function(err){
+        expect(err).to.be.an(Error);
+      })
+      .done(function(){
+        User.schema.adapter.destroy.restore();
+        done();
       });
     });
 
@@ -311,7 +334,9 @@ describe('hooks', function (){
         life.push('beforeValidate');
         d();
       };
-      User.afterInitialize = function (){life.push('afterInitialize'); };
+      User.afterInitialize = function (){
+        life.push('afterInitialize');
+      };
       User.afterSave = function (d){
         life.push('afterSave');
         d();
@@ -332,18 +357,19 @@ describe('hooks', function (){
         life.push('afterValidate');
         d();
       };
-      User.create(function (e, u){
+      User.create().done(function (u){
         user = u;
         life = [];
         done();
       });
     });
+
     beforeEach(function (){
       life = [];
     });
 
     it('should describe create sequence', function (done){
-      User.create(function (){
+      User.create().done(function (){
         expect(life).to.eql([
           'afterInitialize',
           'beforeValidate',
@@ -359,7 +385,7 @@ describe('hooks', function (){
 
     it('should describe new+save sequence', function (done){
       var u = new User();
-      u.save(function (){
+      u.save().done(function (){
         expect(life).to.eql([
           'afterInitialize',
           'beforeValidate',
@@ -374,7 +400,7 @@ describe('hooks', function (){
     });
 
     it('should describe updateAttributes sequence', function (done){
-      user.updateAttributes({name: 'Antony'}, function (){
+      user.updateAttributes({name: 'Antony'}).done(function (){
         expect(life).to.eql([
           'beforeValidate',
           'afterValidate',
@@ -389,18 +415,20 @@ describe('hooks', function (){
 
     it('should describe isValid sequence', function (done){
       expect(user.constructor._validations).to.not.be.ok('Expected user to have no validations, but she have');
-      user.isValid(function (valid){
-        expect(valid).to.be(true);
+      user.isValid().then(function (){
         expect(life).to.eql([
           'beforeValidate',
           'afterValidate'
         ]);
-        done();
-      });
+      }, function(){
+        expect(function(){
+          throw new Error('Shouldn\'t throw');
+        }).to.not.throwError();
+      }).done(done);
     });
 
     it('should describe destroy sequence', function (done){
-      user.destroy(function (){
+      user.destroy().done(function (){
         expect(life).to.eql([
           'beforeDestroy',
           'afterDestroy'

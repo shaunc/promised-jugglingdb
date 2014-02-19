@@ -16,10 +16,13 @@ describe('defaults', function (){
   });
 
   it('should apply defaults on create', function (done){
-    Server.create(function (err, s){
+    Server.create().then(function (s){
       expect(s.port).to.equal(80);
-      done();
-    });
+    }, function(){
+      expect(function(){
+        throw new Error('This should not be called');
+      }).to.not.throwError();
+    }).done(done);
   });
 
   it('should apply defaults on read', function (done){
@@ -27,9 +30,12 @@ describe('defaults', function (){
       type   : String,
       default: 'localhost'
     });
-    Server.all(function (err, servers){
+    Server.all().then(function(servers){
       expect(servers[0].host).to.equal('localhost');
-      done();
-    });
+    }, function(){
+      expect(function(){
+        throw new Error('This should not be called');
+      }).to.not.throwError();
+    }).done(done);
   });
 });
