@@ -1,4 +1,4 @@
-[![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)  [![Coverage Status](https://coveralls.io/repos/pocesar/promised-jugglingdb/badge.png?branch=master)](https://coveralls.io/r/pocesar/promised-jugglingdb?branch=master)
+[![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)  [![Coverage Status](https://coveralls.io/repos/pocesar/promised-jugglingdb/badge.png?branch=master)](https://coveralls.io/r/pocesar/promised-jugglingdb?branch=master) [![Build Status](https://travis-ci.org/pocesar/promised-jugglingdb.png?branch=master)](https://travis-ci.org/pocesar/promised-jugglingdb)
 
 ## Reasoning behind creating a promise based version
 
@@ -18,7 +18,7 @@ See API differences below.
 * Since everything is made properly asynchronous now, `process.nextTick` and `setImmediate` were removed from the code
 * Functions that would act as getter and setters now return the object itself when acting as a setter
 
-## About [![Build Status](https://travis-ci.org/pocesar/promised-jugglingdb.png?branch=master)](https://travis-ci.org/pocesar/promised-jugglingdb)
+## About
 
 [JugglingDB(3)](http://jugglingdb.co) is cross-db ORM for nodejs, providing
 **common interface** to access most popular database formats.  Currently
