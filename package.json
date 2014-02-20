@@ -1,6 +1,6 @@
 {
   "name": "promised-jugglingdb",
-  "description": "Q Promise based version of JugglingDB, the ORM for every database: redis, mysql, neo4j, mongodb, couchdb, postgres, sqlite",
+  "description": "Dual API, promise based version of JugglingDB, the ORM for every database: redis, mysql, neo4j, mongodb, couchdb, postgres, sqlite",
   "version": "0.2.12",
   "author": "Anatoliy Chakkaev <rpm1602@gmail.com>",
   "keywords": [
@@ -84,7 +84,9 @@
     "expect.js": "*",
     "mocha": "*",
     "sinon":"*",
-    "jshint":"*"
+    "jshint":"*",
+    "coveralls":"*",
+    "lodash":"*"
   },
   "dependencies": {
     "inflection": "=1.2.7",

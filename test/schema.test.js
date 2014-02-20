@@ -3,10 +3,13 @@ var db = getSchema(), slave = getSchema(), Model, SlaveModel;
 
 describe('schema', function (){
 
-  it('should define Model', function (){
+  before(function(){
     Model = db.define('Model');
+  });
+
+  it('should define Model', function (){
     expect(Model.schema).to.eql(db);
-    var m = new AbstractClass;
+    var m = new Model;
     expect(m.schema).to.eql(db);
   });
 

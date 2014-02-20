@@ -43,8 +43,8 @@ describe('i18n', function (){
       .create({email: 'John.Doe@example.com', name: 'John Doe'})
       .then(function (){
         return User.create({email: 'John.Doe@example.com'});
-      }).catch(function (user){
-        var errors = user.errors.__localize('ru');
+      }).catch(function (err){
+        var errors = err.obj.errors.__localize('ru');
         expect(errors.name[0]).to.equal('can\'t be blank');
         expect(errors.email[0]).to.equal('Электропочта уже взят');
       }).done(done);

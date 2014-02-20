@@ -9,12 +9,19 @@ describe('datatypes', function (){
       date: Date,
       num : Number,
       bool: Boolean,
-      list: {type: []},
+      list: {type: []}
     });
 
-    db.automigrate().then(function(){
+    db.automigrate()
+    .then(function(){
       return Model.destroyAll();
-    }).done(done);
+    })
+    .then(function(){
+      return Model.create({str: 'hi', date: Date.now(), num: '1', bool: 0, list: ['tests']});
+    })
+    .done(function(){
+      done();
+    });
   });
 
   it('should keep types when get read data from db', function (done){
@@ -28,15 +35,15 @@ describe('datatypes', function (){
       expect(m.num).to.be.a('number');
       expect(m.bool).to.be.a('boolean');
       id = m.id;
-      testFind(testAll);
+      testFind().then(testOne).done(done);
     }, function(){
       expect(function(){
         throw new Error('This should not be called');
       }).to.not.throwError();
     }).done();
 
-    function testFind(next){
-      Model.find(id).then(function (m){
+    function testFind(){
+      return Model.find(id).then(function (m){
         expect(m).to.be.ok();
         expect(m.str).to.be.a('string');
         expect(m.num).to.be.a('number');
@@ -47,12 +54,11 @@ describe('datatypes', function (){
         expect(function(){
           throw new Error('This should not be called');
         }).to.not.throwError();
-      })
-      .done(next);
+      });
     }
 
-    function testAll(){
-      Model.findOne().then(function (m){
+    function testOne(){
+      return Model.findOne().then(function (m){
         expect(m).to.be.ok();
         expect(m.str).to.be.a('string');
         expect(m.num).to.be.a('number');
@@ -63,10 +69,8 @@ describe('datatypes', function (){
         expect(function(){
           throw new Error('This should not be called');
         }).to.not.throwError();
-      })
-      .done(done);
+      });
     }
-
   });
 
   it('should convert "false" to false for boolean', function (){

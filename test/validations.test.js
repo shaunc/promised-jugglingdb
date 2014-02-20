@@ -52,14 +52,21 @@ describe('validations', function (){
 
     describe('skipping', function (){
 
-      it('should allow to skip using if: attribute', function (){
+      it('should allow to skip using if: attribute', function (done){
         User.validatesPresenceOf('pendingPeriod', {if: 'createdByAdmin'});
         var user = new User();
         user.createdByAdmin = true;
-        expect(user.isValid()).to.be(false);
-        expect(user.errors.pendingPeriod).to.eql(['can\'t be blank']);
-        user.pendingPeriod = 1;
-        expect(user.isValid()).to.be(true);
+        user.isValid().catch(function(){
+          expect(user.errors.pendingPeriod).to.eql(['can\'t be blank']);
+          user.pendingPeriod = 1;
+          return user.isValid();
+        }).then(function(){
+          done();
+        }, function(){
+          expect(function(){
+            throw new Error('It should succeed');
+          }).to.not.throwException();
+        });
       });
 
     });
@@ -69,39 +76,41 @@ describe('validations', function (){
       it('should work on create', function (done){
         delete User._validations;
         User.validatesPresenceOf('name');
-        User.create(function (e, u){
-          expect(e).to.be.ok();
-          User.create({name: 'Valid'}, function (e, d){
-            expect(e).to.not.be.ok();
-            done();
-          });
-        });
+        User.create().catch(function (){
+          return User.create({name: 'Valid'});
+        }).then(function (u){
+          expect(u).to.be.ok();
+          expect(u.name).to.equal('Valid');
+        }).done(done);
       });
 
       it('should work on update', function (done){
         delete User._validations;
         User.validatesPresenceOf('name');
-        User.create({name: 'Valid'}, function (e, d){
-          d.updateAttribute('name', null, function (e){
-            expect(e).to.be.ok();
-            expect(e).to.be.a(Error);
-            expect(e).to.be.a(ValidationError);
-            d.updateAttribute('name', 'Vasiliy', function (e){
-              expect(e).to.not.be.ok();
-              done();
-            });
-          })
-        });
+
+        User.create({name: 'Valid'})
+        .bind({})
+        .then(function (d){
+          this.d = d;
+          return this.d.updateAttribute('name', null);
+        }).catch(function (e){
+          expect(e).to.be.ok();
+          expect(e).to.be.a(Error);
+          expect(e).to.be.a(ValidationError);
+          return this.d.updateAttribute('name', 'Vasiliy');
+        }).then(function (u){
+          expect(u).to.be.ok();
+          expect(u.name).to.be('Vasiliy');
+        }).done(done);
       });
 
       it('should return error code', function (done){
         delete User._validations;
         User.validatesPresenceOf('name');
-        User.create(function (e, u){
+        User.create().catch(function (e){
           expect(e).to.be.ok();
           expect(e.codes.name).to.eql(['presence']);
-          done();
-        });
+        }).done(done);
       });
 
       it('should allow to modify error after validation', function (done){
@@ -116,80 +125,88 @@ describe('validations', function (){
 
   describe('presence', function (){
 
-    it('should validate presence', function (){
+    it('should validate presence', function (done){
       User.validatesPresenceOf('name', 'email');
       var u = new User();
-      expect(u.isValid()).to.be(false);
-      u.name = 1;
-      u.email = 2;
-      expect(u.isValid()).to.be(true);
+      u.isValid().catch(function(e){
+        expect(e).to.be.a(ValidationError);
+        u.name = 1;
+        u.email = 2;
+        return u.isValid();
+      }).then(function(u){
+        expect(u.name).to.be('1');
+      }).done(done);
     });
 
-    it('should skip validation by property (if/unless)', function (){
+    it('should skip validation by property (if/unless)', function (done){
       User.validatesPresenceOf('domain', {unless: 'createdByScript'});
 
       var user = new User(getValidAttributes());
-      expect(user.isValid()).to.be(true);
 
-      user.createdByScript = false;
-      expect(user.isValid()).to.be(false);
-      expect(user.errors.domain).to.eql(['can\'t be blank']);
-
-      user.domain = 'domain';
-      expect(user.isValid()).to.be(true);
+      user.isValid().then(function(u){
+        expect(u).to.be(user);
+        user.createdByScript = false;
+        return user.isValid();
+      }).catch(function(e){
+        expect(e).to.be.a(ValidationError);
+        expect(user.errors.domain).to.eql(['can\'t be blank']);
+        user.domain = 'domain';
+        return user.isValid();
+      }).done(function(u){
+        expect(u).to.be(user);
+        done();
+      });
     });
 
   });
 
   describe('uniqueness', function (){
     it('should validate uniqueness', function (done){
-      var i = 0;
       User.validatesUniquenessOf('email');
-      var u = new User({email: 'hey'});
-      var isValid = u.isValid(function (valid){
-        expect(valid).to.be(true);
-        u.save(function (){
-          var u2 = new User({email: 'hey'});
-          u2.isValid(function (valid){
-            expect(valid).to.be(false);
-            done();
-          });
-        });
-      });
-      expect(isValid).to.be.an('undefined');
+      var user = new User({email: 'hey'});
+
+      user.isValid().then(function (u){
+        expect(u).to.be(user);
+        return u.save();
+      }).then(function (){
+        var u2 = new User({email: 'hey'});
+        return u2.isValid();
+      }).catch(function(e){
+        expect(e).to.be.a(ValidationError);
+        expect(e.codes.email).to.eql(['uniqueness']);
+      }).done(done);
     });
 
     it('should correctly handle null values', function (done){
       User.validatesUniquenessOf('email', {allowNull: true});
-      var u = new User({email: null});
-      var isValid = u.isValid(function (valid){
-        expect(valid).to.be(true);
-        u.save(function (){
-          var u2 = new User({email: null});
-          u2.isValid(function (valid){
-            expect(valid).to.be(true);
-            done();
-          });
-        });
-      });
-      expect(isValid).to.be.an('undefined');
+      var u = new User({email: null}), u2;
+      u.isValid().then(function (user){
+        expect(user).to.be(u);
+        return u.save();
+      }).then(function (){
+        u2 = new User({email: null});
+        return u2.isValid();
+      }).then(function (u){
+        expect(u).to.be(u2);
+      }).done(done);
     });
 
     it('should handle same object modification', function (done){
       User.validatesUniquenessOf('email');
       var u = new User({email: 'hey'});
-      var isValid = u.isValid(function (valid){
-        expect(valid).to.be(true);
-        u.save(function (){
-          u.name = 'Goghi';
-          u.isValid(function (valid){
-            expect(valid).to.be(true);
-            u.save(done);
-          });
-        });
+      u.isValid().then(function (user){
+        expect(user).to.be(u);
+        return u.save();
+      }).then(function (){
+        u.name = 'Goghi';
+        return u.isValid();
+      }).then(function (user){
+        expect(user).to.be(u);
+        return u.save();
+      }).done(function(user){
+        expect(user).to.be(u);
+        done();
       });
-      // async validations always falsy when called as sync
-      expect(isValid).to.be.an('undefined');
     });
 
   });
@@ -215,51 +232,60 @@ describe('validations', function (){
     it('should validate max length', function (done){
       User.validatesLengthOf('gender', {max: 6});
       var u = new User(getValidAttributes());
-      u.isValid(function (valid){
+      u.isValid().then(function (){
         expect(u.errors).to.not.be.ok();
-        expect(valid).to.be(true);
         u.gender = 'undefined';
-        u.isValid(function (valid){
-          expect(u.errors).to.be.ok();
-          expect(valid).to.be(false);
-          done();
-        });
-      });
+        return u.isValid();
+      }).catch(function (errors){
+        expect(u.errors).to.be.ok();
+        expect(u).to.be(errors.obj);
+      }).done(done);
     });
 
     it('should validate min length', function (done){
       User.validatesLengthOf('bio', {min: 3});
       var u = new User({bio: 'ha'});
-      u.isValid(function (valid){
+      u.isValid().catch(function (e){
         expect(u.errors).to.be.ok();
-        expect(valid).to.be(false);
+        expect(e).to.be.ok();
         u.bio = 'undefined';
-        u.isValid(function (valid){
-          expect(u.errors).to.not.be.ok();
-          expect(valid).to.be(true);
-          done();
-        });
-      });
+        return u.isValid();
+      }).then(function (){
+        expect(u.errors).to.not.be.ok();
+      }).done(done);
     });
 
     it('should validate exact length', function (done){
       User.validatesLengthOf('countryCode', {is: 2});
       var u = new User(getValidAttributes());
-      u.isValid(function (valid){
+      u.isValid().then(function (){
         expect(u.errors).to.not.be.ok();
-        expect(valid).to.be(true);
         u.countryCode = 'RUS';
-        u.isValid(function (valid){
-          expect(u.errors).to.be.ok();
-          expect(valid).to.be(false);
-          done();
-        });
-      });
+        return u.isValid();
+      }).catch(function (){
+        expect(u.errors).to.be.ok();
+      }).done(done);
     });
   });
 
   describe('custom', function (){
-    it('should validate using custom sync validation');
-    it('should validate using custom async validation');
+    it('should validate using custom validation', function(done){
+      User.validate('countryCode', function(attr, validator, err, next){
+        if (this[attr] === 'RUS') {
+          err();
+        }
+        next();
+      });
+      var u = new User(getValidAttributes());
+
+      u.isValid().then(function(){
+        u.countryCode = 'RUS';
+        return u.isValid();
+      }).catch(function(e){
+        expect(e.codes.countryCode).to.eql(['custom']);
+      }).done(function(){
+        done();
+      });
+    });
   });
 });

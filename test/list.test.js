@@ -1,5 +1,7 @@
 var db, Page;
 
+var List = require('../lib/list');
+
 describe('list', function (){
 
   before(function (){
@@ -14,6 +16,17 @@ describe('list', function (){
     expect(JSON.stringify(p)).to.equal(
       '{"widgets":[{"id":"hello"}]}'
     );
+  });
+
+  it('accepts JSON string as data', function(){
+    var p = new Page('{"widgets":["hello"]}');
+    expect(JSON.stringify(p)).to.equal('{"widgets":[{"id":"hello"}]}');
+  });
+
+  it('should throw an error on invalid JSON data', function(){
+    expect(function(){
+      new Page('{"widgets:"hello"]}');
+    }).to.throwError();
   });
 
   it('should push and remove object', function (){
@@ -65,5 +78,52 @@ describe('list', function (){
       )).to.eql('{"foo":"bar","id":1}');
     });
 
+  });
+
+  describe('list class itself', function(){
+    var list;
+    beforeEach(function(){
+      list = new List([1,2,3]);
+    });
+
+    afterEach(function(){
+      list = null;
+    });
+
+    it('should return the length', function(){
+      expect(list.length).to.equal(3);
+    });
+
+    it('should accept JSON string data', function(){
+      expect((new List("[1,2,3]")).length).to.equal(3);
+    });
+
+    it('should create list on invalid JSON string data', function(){
+      expect((new List("[1,2,3")).length).to.equal(0);
+    });
+
+    it('should return the array on inspect', function(){
+      expect(list.inspect()).to.eql('[ { id: 1 }, { id: 2 }, { id: 3 } ]');
+    });
+
+    it('should return JSON string on typecast', function(){
+      expect("" + list).to.equal('[{"id":1},{"id":2},{"id":3}]');
+    });
+
+    it('should removeAt', function(){
+      list.removeAt(0);
+      expect(list.length).to.equal(2);
+    });
+
+    it('should remove objects by id', function(){
+      list.push(9);
+      list.remove({id: 9});
+      expect(list.length).to.equal(3);
+    });
+
+    it('should execute callback from the object', function(done){
+      list.push({'cb': done});
+      list.map('cb');
+    });
   });
 });

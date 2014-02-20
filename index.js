@@ -8,10 +8,12 @@ exports.AbstractClass = require('./lib/model.js');
 
 var baseSQL = './lib/sql';
 
+/*istanbul ignore next: depends on compoundjs*/
 exports.__defineGetter__('BaseSQL', function () {
     return require(baseSQL);
 });
 
+/*istanbul ignore next: depends on compoundjs*/
 exports.loadSchema = function(filename, settings, compound) {
     var schema = [];
     var definitions = require(filename);
@@ -48,6 +50,7 @@ exports.loadSchema = function(filename, settings, compound) {
     }
 };
 
+/*istanbul ignore next: depends on compoundjs*/
 exports.init = function (compound) {
     if (global.railway) {
         global.railway.orm = exports;
@@ -100,9 +103,4 @@ exports.init = function (compound) {
 
 exports.__defineGetter__('version', function () {
     return JSON.parse(fs.readFileSync(__dirname + '/package.json')).version;
-});
-
-var commonTest = './test/common_test';
-exports.__defineGetter__('test', function () {
-    return require(commonTest);
 });

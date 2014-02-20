@@ -205,11 +205,11 @@ describe('manipulation', function (){
     var person;
 
     before(function (done){
-      Person.destroyAll(function (){
-        Person.create().then(function (p){
-          person = p;
-        }).done(done);
-      });
+      Person.destroyAll().then(function (){
+        return Person.create();
+      }).then(function (p){
+        person = p;
+      }).done(done);
     });
 
     it('should update one attribute', function (done){
@@ -252,19 +252,28 @@ describe('manipulation', function (){
       }).done(done);
     });
 
-    // TODO: implement destroy with filtered set
-    it('should destroy filtered set of records');
+    it('should destroy filtered set of records', function(done){
+      for(var i = 10; i > 0; i--) {
+        Person.create({age: i, married: i > 5});
+      }
+
+      Person.destroySome({where: {married: true}}).then(function(count){
+        expect(count).to.be(5);
+      }).done(done);
+    });
   });
 
   describe('iterate', function (){
 
-    before(function (next){
+    before(function (done){
       var ps = [];
       for (var i = 0; i < 507; i += 1) {
         ps.push({name: 'Person ' + i});
       }
-      Person.create(ps).done(function(){
-        next();
+      Person.destroyAll().then(function(){
+        return Person.create(ps);
+      }).done(function(){
+        done();
       });
     });
 

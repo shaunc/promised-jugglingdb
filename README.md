@@ -1,10 +1,24 @@
-[![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)
+[![Stories in Ready](https://badge.waffle.io/1602/jugglingdb.png?label=ready)](https://waffle.io/1602/jugglingdb)  [![Coverage Status](https://coveralls.io/repos/pocesar/promised-jugglingdb/badge.png?branch=master)](https://coveralls.io/r/pocesar/promised-jugglingdb?branch=master)
+
+## Reasoning behind creating a promise based version
+
+Dealing with database is always an asynchronous task by nature. You query something,
+the database needs to process your command, and then send you the results. Node is
+built around callbacks and events, and to tame it to avoid callback hell and
+unmaintainable code, promises were created.
+
+This version is the dual API, along with the original callback based, it's promise based
+version of Jugglindb, and will be maintained to be kept up-to-date with the original.
+All adapters should work with this version out-of-the-box.
+
+See API differences below.
+
+* Every function that would return a value now return a promise
+* Validation is async only
+* Since everything is made properly asynchronous now, `process.nextTick` and `setImmediate` were removed from the code
+* Functions that would act as getter and setters now return the object itself when acting as a setter
 
 ## About [![Build Status](https://travis-ci.org/pocesar/promised-jugglingdb.png?branch=master)](https://travis-ci.org/pocesar/promised-jugglingdb)
-
-This version is the promise based (instead of callbacks) version of Jugglindb,
-and will be maintained to be kept up-to-date with the original, callback-based
-module. All adapters work with this version out-of-the-box.
 
 [JugglingDB(3)](http://jugglingdb.co) is cross-db ORM for nodejs, providing
 **common interface** to access most popular database formats.  Currently
@@ -95,6 +109,34 @@ Article
     console.log('Finished with article1 tags', tags);
 });
 
+```
+
+Or this:
+
+```javascript
+    db.automigrate(function (){
+      Book.destroyAll(function (){
+        Chapter.destroyAll(function (){
+          Author.destroyAll(function (){
+            Reader.destroyAll(done);
+          });
+        });
+      });
+    });
+```
+
+to
+
+```javascript
+    db.automigrate().then(function (){
+      return Book.destroyAll();
+    }).then(function (){
+      return Chapter.destroyAll();
+    }).then(function (){
+      return Author.destroyAll();
+    }).then(function (){
+      return Reader.destroyAll();
+    }).done(done);
 ```
 
 More verbose, but everything in it's place, and the flow is linear and easy to spot any errors, plus each error or
@@ -262,7 +304,7 @@ User.hasMany(Post,   {as: 'posts',  foreignKey: 'userId'});
 
 Post.belongsTo(User, {as: 'author', foreignKey: 'userId'});
 // creates instance methods:
-// post.author(callback) -- getter when called with function
+// post.author() -- getter when called with function
 // post.author() -- sync getter when called without params
 // post.author(user) -- setter when called with object
 
@@ -291,28 +333,40 @@ user.save(...);
 
 // just instantiate model
 new Post
+
 // save model (of course async)
 Post.create().then();
+
 // all posts
 Post.all().then()
+
 // all posts by user
 Post.all({where: {userId: user.id}, order: 'id', limit: 10, skip: 20}).then();
+
 // the same as prev
 user.posts().then()
+
 // get one latest post
 Post.findOne({where: {published: true}, order: 'date DESC'}).then();
+
 // same as new Post({userId: user.id});
 user.posts.build
+
 // save as Post.create({userId: user.id}).then();
 user.posts.create().then()
+
 // find instance by id
 User.find(1).then()
+
 // count instances
 User.count([conditions, ]).then()
+
 // destroy instance
 user.destroy().then();
+
 // destroy all instances
 User.destroyAll().then();
+
 // update a post (currently only on the mysql adapter)
 Post.update({ where:{id:'1'}, update:{ published:false }}).then();
 ```
@@ -332,9 +386,9 @@ User.validatesUniquenessOf('email', {message: 'email is not unique'});
 
 user.isValid().then(function () {
     // valid!
-}, function(errors){
+}, function(u){
     // not valid
-    errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
+    u.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
     // or user.errors, they are the same
 })
 
@@ -371,6 +425,7 @@ as the `err` parameter to the API method callback.
 var user = new User;
 // afterInitialize
 user.save().then(); // If Model.id isn't set, save will invoke Model.create() instead
+
 // beforeValidate
 // afterValidate
 // beforeSave
@@ -379,6 +434,7 @@ user.save().then(); // If Model.id isn't set, save will invoke Model.create() in
 // afterSave
 // callback
 user.updateAttribute('email', 'email@example.com').then();
+
 // beforeValidate
 // afterValidate
 // beforeSave
@@ -387,9 +443,11 @@ user.updateAttribute('email', 'email@example.com').then();
 // afterSave
 // callback
 user.destroy().then();
+
 // beforeDestroy
 // afterDestroy
 // callback
+
 User.create(data).then();
 // beforeValidate
 // afterValidate

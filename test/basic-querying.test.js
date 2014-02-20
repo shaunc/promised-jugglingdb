@@ -122,6 +122,23 @@ describe('basic-querying', function (){
       }).done(done);
     });
 
+    it('should accept predicate function', function(done) {
+      if (db.name !== 'memory') {
+        done();
+        return;
+      }
+
+      User.all({where: function(item){
+        return item.order > 3;
+      }}).then(function(all){
+        expect(all).to.have.length(3);
+      }, function(){
+        expect(function(){
+          throw new Error('This should not be called');
+        }).to.not.throwError();
+      }).done(done);
+    });
+
   });
 
   describe('count', function (){
@@ -141,6 +158,7 @@ describe('basic-querying', function (){
         expect(n).to.equal(2);
       }).done(done);
     });
+
   });
 
   describe('findOne', function (){

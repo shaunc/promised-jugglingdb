@@ -121,6 +121,17 @@ describe('include', function (){
     }).done(done);
   });
 
+  it('should fail on invalid includes', function(done){
+    User.all({include: 'dontexist'}).then(function(){
+      expect(function(){
+        throw new Error('Should not succeed');
+      }).to.not.throwException();
+    }).catch(function(e){
+      expect(e).to.be.an(Error);
+      expect(e.message).to.equal('Relation "dontexist" is not defined for User model');
+    }).done(done);
+  });
+
 });
 
 function setup(done){

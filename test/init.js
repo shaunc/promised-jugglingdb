@@ -14,12 +14,11 @@ global.sinon = require('sinon');
 
 var Schema = require('../').Schema;
 
-if (process.env.LONG_STACK_TRACES) {
-  require('bluebird').longStackTraces();
-}
-
 if (!('getSchema' in global)) {
   global.getSchema = function (){
     return new Schema('memory');
   };
 }
+
+//var profiler = require('profiler');
+//profiler.resume();
