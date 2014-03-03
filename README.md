@@ -111,6 +111,27 @@ Article
 
 ```
 
+which can be written as:
+
+```javascript
+var Q = require('bluebird');
+Q.all([
+    Article.create({title: 'Article 1'}),
+    Article.create({title: 'Article 2'}),
+    Tag.create({name: 'correct'})
+])
+.spread(function(article1, article2, tag){
+    return Q.all([article1.tags.add(tag),article2.tags.add(tag),article2.tags.remove(tag)])
+            .then(Q.all([article2.tags(true),article1.tags(true)]));
+}).spread(function(article1Tags, article2Tags){
+    console.log('Finished with article1 and article2 tags', article1Tags, article2Tags);
+}).catch(TypeError, ReferenceError, function(err){
+    console.log('A programming error ocurred', err);
+}).catch(ValidationError, function(err){
+    console.log('A validation error ocurred', err);
+});
+```
+
 Or this:
 
 ```javascript
@@ -137,6 +158,18 @@ to
     }).then(function (){
       return Reader.destroyAll();
     }).done(done);
+```
+
+or even better
+
+```javascript
+    require('bluebird').all([
+        db.automigrate(),
+        Book.destroyAll(),
+        Chapter.destroyAll(),
+        Author.destroyAll(),
+        Reader.destroyAll()
+    ]).done(done);
 ```
 
 More verbose, but everything in it's place, and the flow is linear and easy to spot any errors, plus each error or
