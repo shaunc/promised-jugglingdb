@@ -388,9 +388,11 @@ user.isValid().then(function () {
     // valid!
 }, function(u){
     // not valid
-    u.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
-    // or user.errors, they are the same
-})
+    // u is ValidationError
+    user.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}
+    // or u.codes
+    // or u.obj.errors === user.errors they are the same
+});
 
 ```
 
