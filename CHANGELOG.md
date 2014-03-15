@@ -1,3 +1,7 @@
+# March 15th 2014
+* Merge README.md changes from jugglingdb
+* Hopefully fix schema.adapter.logger that broke in `jugglingdb-redis`
+
 # February 15th 2014
 * JSHinted code
 * Fixed constructors

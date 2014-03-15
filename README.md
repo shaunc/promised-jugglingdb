@@ -249,10 +249,17 @@ the to callback hell, that's deeply nested and might lead to memory leaks.
 
     <!-- SQLite -->
     <tr>
-      <td><a href="http://www.sqlite.org/" target="_blank"><img width="16" src="https://raw.github.com/1602/jugglingdb/master/media/sqlite.png" style="vertical-align:middle"" alt="SQLite" /></a> SQLite</td>
+      <td><a href="http://www.sqlite.org/" target="_blank"><img width="16" src="https://raw.github.com/1602/jugglingdb/master/media/sqlite.png" style="vertical-align:middle" alt="SQLite" /></a> SQLite</td>
       <td><a href="https://github.com/jugglingdb/sqlite3-adapter" target="_blank">jugglingdb/sqlite3-adapter</a></td>
       <td><a href="https://github.com/anatoliychakkaev" target="_blank">Anatoliy Chakkaev</a></td>
       <td><a href="https://travis-ci.org/jugglingdb/sqlite3-adapter" target="_blank"><img src="https://travis-ci.org/jugglingdb/sqlite3-adapter.png?branch=master" alt="Build Status" /></a></td>
+    </tr>
+    <!-- ArangoDB -->
+    <tr>
+      <td><a href="http://www.arangodb.org/"><img src="http://www.arangodb.org/wp-content/themes/triagens/images/favicon.ico" style="vertical-align:middle" alt="ArangoDB" /></a> ArangoDB</td>
+      <td><a href="https://github.com/m0ppers/jugglingdb-arango">jugglingdb-arango</a></td>
+      <td><a href="https://github.com/m0ppers">Andreas Streichardt</a></td>
+      <td><a href="https://travis-ci.org/m0ppers/jugglingdb-arango"><img src="https://travis-ci.org/m0ppers/jugglingdb-arango.png?branch=master" alt="Build Status" /></a></td>
     </tr>
     <tr>
       <td>WebService</td>
