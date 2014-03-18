@@ -1,7 +1,7 @@
 {
   "name": "promised-jugglingdb",
   "description": "Dual API, promise based version of JugglingDB, the ORM for every database: redis, mysql, neo4j, mongodb, couchdb, postgres, sqlite",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "author": "Anatoliy Chakkaev <rpm1602@gmail.com>",
   "keywords": [
     "promise",
